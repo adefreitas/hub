@@ -4,11 +4,17 @@ import { HubModes } from "./types/types";
 
 interface StackOneHubProps {
   mode?: HubModes;
+  token?: string;
+  baseUrl?: string;
 }
 
-export const StackOneHub: React.FC<StackOneHubProps> = ({ mode }) => {
+export const StackOneHub: React.FC<StackOneHubProps> = ({
+  mode,
+  token,
+  baseUrl,
+}) => {
   const modeComponents: Record<HubModes, React.ReactNode> = {
-    "integration-picker": <IntegrationPicker />,
+    "integration-picker": <IntegrationPicker token={token} baseUrl={baseUrl} />,
     "csv-importer": <CsvImporter />,
   };
 

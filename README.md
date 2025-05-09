@@ -22,15 +22,21 @@ StackOne HUB is a React-based project that includes a web component wrapper for 
    npm install
    ```
 
-3. Create a `.env` file based on `.env.example`:
+3. Build the project:
 
    ```bash
-   cp .env.example .env
+   npm run build
    ```
 
-   Update the `.env` file with the appropriate values for your environment.
-
 ## Development
+
+Create a `.env` file based on `.env.example` inside the `dev` directory :
+
+```bash
+cp .env.example .env
+```
+
+Update the `.env` file with the appropriate values for your environment.
 
 To start the development server:
 
