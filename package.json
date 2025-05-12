@@ -6,7 +6,11 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "rollup -c",
-    "dev": "vite"
+    "dev": "vite",
+    "code:format": "biome format ./src ./dev",
+    "code:format:fix": "biome format --write ./src ./dev",
+    "lint": "biome lint --error-on-warnings ./src ./dev && biome check ./src ./dev",
+    "lint:fix": "biome lint --write ./src ./dev && biome check --write ./src ./dev"
   },
   "author": "StackOne",
   "license": "MIT",
@@ -15,6 +19,7 @@
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.9.4",
     "@rollup/plugin-commonjs": "^28.0.3",
     "@rollup/plugin-node-resolve": "^16.0.1",
     "@rollup/plugin-replace": "^6.0.2",

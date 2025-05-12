@@ -1,0 +1,77 @@
+{
+  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "vcs": {
+    "enabled": false,
+    "clientKind": "git",
+    "useIgnoreFile": false
+  },
+  "files": {
+    "ignoreUnknown": false,
+    "ignore": ["**/node_modules/**", "**/dist/**"]
+  },
+  "formatter": {
+    "enabled": true,
+    "useEditorconfig": true,
+    "formatWithErrors": false,
+    "indentStyle": "space",
+    "indentWidth": 4,
+    "lineEnding": "lf",
+    "lineWidth": 100,
+    "attributePosition": "auto",
+    "bracketSpacing": false
+  },
+  "organizeImports": {
+    "enabled": true
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": false,
+      "complexity": {
+        "noBannedTypes": "error",
+        "noUselessThisAlias": "error",
+        "noUselessTypeConstraint": "error",
+        "useArrowFunction": "off"
+      },
+      "correctness": {
+        "noConstAssign": "error",
+        "noPrecisionLoss": "error",
+        "noUnusedVariables": "warn",
+        "useArrayLiterals": "off",
+        "useExhaustiveDependencies": "warn",
+        "useHookAtTopLevel": "error"
+      },
+      "style": {
+        "noInferrableTypes": "error",
+        "noNamespace": "error",
+        "noNonNullAssertion": "warn",
+        "useAsConstAssertion": "error",
+        "useBlockStatements": "off"
+      },
+      "suspicious": {
+        "noEmptyBlockStatements": "error",
+        "noEmptyInterface": "error",
+        "noExplicitAny": "error",
+        "noExtraNonNullAssertion": "error",
+        "noMisleadingInstantiator": "error",
+        "useNamespaceKeyword": "error"
+      },
+      "nursery": {
+        "useComponentExportOnlyModules": "off"
+      }
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "jsxQuoteStyle": "double",
+      "quoteProperties": "asNeeded",
+      "trailingCommas": "all",
+      "semicolons": "always",
+      "arrowParentheses": "always",
+      "bracketSameLine": false,
+      "quoteStyle": "single",
+      "attributePosition": "auto",
+      "bracketSpacing": true
+    }
+  }
+}
