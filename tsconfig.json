@@ -7,11 +7,13 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "moduleResolution": "Node",
-    "declaration": true,
+    "declaration": false,
     "outDir": "dist",
     "sourceMap": true,
     "jsxImportSource": "react",
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["src", "dev"]
+  "include": ["src"],
+  "exclude": ["**/*.d.ts"],
+  "files": ["src/index.ts"]
 }

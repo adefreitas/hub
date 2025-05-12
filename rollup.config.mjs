@@ -1,28 +1,29 @@
-import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
-import typescript from "@rollup/plugin-typescript";
-import postcss from "rollup-plugin-postcss";
-import external from "rollup-plugin-peer-deps-external";
-import terser from "@rollup/plugin-terser";
+import resolve from "@rollup/plugin-node-resolve";
 import replace from "@rollup/plugin-replace";
+import terser from "@rollup/plugin-terser";
+import typescript from "@rollup/plugin-typescript";
+import del from "rollup-plugin-delete";
+import dts from "rollup-plugin-dts";
+import external from "rollup-plugin-peer-deps-external";
+import postcss from "rollup-plugin-postcss";
 
 export default [
   // React Component Bundle (external React)
   {
-    input: "src/StackOneHub.tsx",
+    input: "src/index.ts",
     output: [
       {
-        file: "dist/StackOneHub.esm.js",
+        file: "dist/react/StackOneHub.esm.js",
         format: "esm",
-        sourcemap: true,
       },
       {
-        file: "dist/StackOneHub.cjs.js",
+        file: "dist/react/StackOneHub.cjs.js",
         format: "cjs",
-        sourcemap: true,
       },
     ],
     plugins: [
+      del({ targets: "dist/react/*" }),
       external(),
       resolve(),
       commonjs(),
@@ -40,12 +41,13 @@ export default [
   {
     input: "src/WebComponentWrapper.tsx",
     output: {
-      file: "dist/StackOneHub.web.js",
+      file: "dist/webcomponent/StackOneHub.web.js",
       format: "iife",
       name: "StackOneHubWebComponent",
       sourcemap: true,
     },
     plugins: [
+      del({ targets: "dist/webcomponent/*" }), // Clean the dist folder before each build
       resolve(),
       commonjs(),
       typescript({ tsconfig: "./tsconfig.json" }),
@@ -56,5 +58,15 @@ export default [
         "process.env.NODE_ENV": JSON.stringify("production"),
       }),
     ],
+  },
+
+  // Declaration file bundle
+  {
+    input: "src/index.ts",
+    output: {
+      file: "dist/index.d.ts",
+      format: "es",
+    },
+    plugins: [del({ targets: "dist/index.d.ts" }), dts()],
   },
 ];
