@@ -1,5 +1,5 @@
-import { CsvImporter } from "./modules/CsvImporter";
-import { IntegrationPicker } from "./modules/IntegrationPicker";
+import { CsvImporter } from "./modules/csv-importer.tsx/CsvImporter";
+import { IntegrationPicker } from "./modules/integration-picker/IntegrationPicker";
 import { HubModes } from "./types/types";
 
 interface StackOneHubProps {
@@ -13,20 +13,24 @@ export const StackOneHub: React.FC<StackOneHubProps> = ({
   token,
   baseUrl,
 }) => {
-  const modeComponents: Record<HubModes, React.ReactNode> = {
-    "integration-picker": <IntegrationPicker token={token} baseUrl={baseUrl} />,
-    "csv-importer": <CsvImporter />,
-  };
+  const defaultBaseUrl = "https://api.stackone.com";
+  const apiUrl = baseUrl ?? defaultBaseUrl;
+
+  if (!token) {
+    return <div>Error: No token provided</div>;
+  }
+  if (!mode) {
+    return <div>No mode selected</div>;
+  }
 
   return (
     <div>
       <h1>StackOneHub</h1>
       <p>Current mode: {mode}</p>
-      {mode ? (
-        modeComponents[mode] || <div>Invalid mode selected</div>
-      ) : (
-        <div>No mode selected</div>
+      {mode === "integration-picker" && (
+        <IntegrationPicker token={token} baseUrl={apiUrl} />
       )}
+      {mode === "csv-importer" && <CsvImporter />}
     </div>
   );
 };

@@ -46,16 +46,15 @@ const HubWrapper: React.FC = () => {
 
   return (
     <div>
-      <h1>StackOneHub</h1>
-      <p>This is a simple React component.</p>
+      <h1>StackOneHub Demo</h1>
       <p>Current mode: {mode}</p>
+      <button onClick={fetchToken}>Fetch Token</button>
       <button onClick={() => setMode("integration-picker")}>
         Set Integration Picker mode
       </button>
       <button onClick={() => setMode("csv-importer")}>
         Set CSV Importer mode
       </button>
-      <button onClick={fetchToken}>Fetch Token</button>
       <StackOneHub mode={mode} token={token} baseUrl={apiUrl} />
     </div>
   );
