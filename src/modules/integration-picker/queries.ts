@@ -41,6 +41,10 @@ export const getConnectorConfig = async (baseUrl: string, token: string, connect
         headers,
     });
 
+    if (response.status === 403) {
+        throw new Error('Forbidden: You do not have permission to access this resource');
+    }
+
     if (!response.ok) {
         throw new Error('Network response was not ok');
     }
@@ -73,6 +77,10 @@ export const connectAccount = async (
             credentials,
         }),
     });
+
+    if (response.status === 403) {
+        throw new Error('Forbidden: You do not have permission to access this resource');
+    }
 
     if (!response.ok) {
         const errorResponse = await response.json();
