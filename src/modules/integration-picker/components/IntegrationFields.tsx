@@ -1,3 +1,4 @@
+import { Button, Input, Typography } from '@stackone/malachite';
 import { useMemo, useState } from 'react';
 import { connectAccount } from '../queries';
 import { ConnectorConfig, Integration } from '../types';
@@ -64,22 +65,22 @@ export const IntegrationForm: React.FC<IntegrationFieldsProps> = ({
 
     return (
         <div>
-            <h2>Link {integration.name} Account</h2>
+            <Typography variant="subtitle">Link {integration.name} Account</Typography>
             {guide && (
                 <>
                     {guide.supportLink ? (
                         <a href={guide.supportLink} target="_blank">
-                            {guide.description}
+                            <Typography variant="link">{guide.description}</Typography>
                         </a>
                     ) : (
-                        <p>{guide.description}</p>
+                        <Typography>{guide.description}</Typography>
                     )}
                 </>
             )}
 
             {error && (
                 <>
-                    <p style={{ color: 'red' }}>{error.message}</p>
+                    <Typography style={{ color: 'red' }}>{error.message}</Typography>
                     <pre>{error.provider_response}</pre>
                 </>
             )}
@@ -92,16 +93,19 @@ export const IntegrationForm: React.FC<IntegrationFieldsProps> = ({
                     {fields.map((field) => {
                         return (
                             <div key={field.key}>
-                                <label>
+                                <Typography>
                                     {field.label} ({field.type})
-                                </label>
+                                </Typography>
                                 {field.guide && (
                                     <>
-                                        <p>{field.guide.tooltip}</p>
-                                        <p>{field.guide.description}</p>
+                                        <br />
+                                        <Typography type="small">
+                                            {field.guide.tooltip}
+
+                                            {field.guide.description}
+                                        </Typography>
                                     </>
                                 )}
-                                {field.readOnly && <span> (Read Only)</span>}
                                 {field.type === 'text_area' && (
                                     <textarea
                                         name={field.key}
@@ -129,19 +133,22 @@ export const IntegrationForm: React.FC<IntegrationFieldsProps> = ({
                                     field.type === 'number' ||
                                     field.type === 'password' ||
                                     field.type == null) && (
-                                    <input
-                                        type={field.type}
-                                        name={field.key}
-                                        required={field.required}
-                                        placeholder={field.placeholder}
-                                        value={field.value}
-                                        disabled={field.readOnly}
-                                    />
+                                    <>
+                                        <br />
+                                        <Input
+                                            type={field.type}
+                                            name={field.key}
+                                            required={field.required}
+                                            placeholder={field.placeholder}
+                                            value={field.value}
+                                            disabled={field.readOnly}
+                                        />
+                                    </>
                                 )}
                             </div>
                         );
                     })}
-                    <button type="submit">Send it</button>
+                    <Button type="submit">Send it</Button>
                 </form>
             )}
         </div>

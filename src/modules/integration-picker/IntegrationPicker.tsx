@@ -1,3 +1,4 @@
+import { Card, CardContent } from '@stackone/malachite';
 import { useEffect, useState } from 'react';
 import { IntegrationForm } from './components/IntegrationFields';
 import { IntegrationSelector } from './components/IntegrationSelector';
@@ -59,33 +60,28 @@ export const IntegrationPicker: React.FC<IntegrationPickerProps> = ({ token, bas
     }
 
     return (
-        <div
-            style={{
-                maxWidth: '600px',
-                margin: '0 auto',
-                padding: '32px',
-                borderRadius: '10px',
-                backgroundColor: '#fff',
-                border: '1px solid #ccc',
-            }}
-        >
-            {!connectorData && (
-                <IntegrationSelector
-                    integrations={hubData?.integrations || []}
-                    onSelect={setSelectedIntegration}
-                />
-            )}
-            {!connectorData && hubData && hubData.integrations.length === 0 && (
-                <div>No integrations found.</div>
-            )}
-            {connectorData && selectedIntegration && (
-                <IntegrationForm
-                    integration={selectedIntegration}
-                    token={token}
-                    baseUrl={baseUrl}
-                    connectorConfig={connectorData}
-                />
-            )}
+        <div style={{ padding: '0px 200px' }}>
+            <Card>
+                <CardContent>
+                    {!connectorData && (
+                        <IntegrationSelector
+                            integrations={hubData?.integrations || []}
+                            onSelect={setSelectedIntegration}
+                        />
+                    )}
+                    {!connectorData && hubData && hubData.integrations.length === 0 && (
+                        <div>No integrations found.</div>
+                    )}
+                    {connectorData && selectedIntegration && (
+                        <IntegrationForm
+                            integration={selectedIntegration}
+                            token={token}
+                            baseUrl={baseUrl}
+                            connectorConfig={connectorData}
+                        />
+                    )}
+                </CardContent>
+            </Card>
         </div>
     );
 };

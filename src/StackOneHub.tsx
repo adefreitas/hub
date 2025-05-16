@@ -1,3 +1,4 @@
+import { Typography } from '@stackone/malachite';
 import { CsvImporter } from './modules/csv-importer.tsx/CsvImporter';
 import { IntegrationPicker } from './modules/integration-picker/IntegrationPicker';
 import { HubModes } from './types/types';
@@ -21,8 +22,6 @@ export const StackOneHub: React.FC<StackOneHubProps> = ({ mode, token, baseUrl }
 
     return (
         <div>
-            <h1>StackOneHub</h1>
-            <p>Current mode: {mode}</p>
             {mode === 'integration-picker' && <IntegrationPicker token={token} baseUrl={apiUrl} />}
             {mode === 'csv-importer' && <CsvImporter />}
         </div>
