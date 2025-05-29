@@ -1,7 +1,7 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { IntegrationForm } from './components/IntegrationFields';
 import { IntegrationSelector } from './components/IntegrationSelector';
-import { getConnectorConfig, getHubData } from './queries';
+import { connectAccount, getConnectorConfig, getHubData } from './queries';
 import { Integration } from './types';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -64,7 +64,8 @@ const Footer: React.FC<{
     selectedIntegration: Integration | null;
     fullWidth?: boolean;
     onBack: () => void;
-}> = ({ fullWidth = true, selectedIntegration, onBack }) => {
+    onNext: () => void;
+}> = ({ fullWidth = true, selectedIntegration, onBack, onNext }) => {
     const buttons: Array<{
         label: string;
         type: 'filled' | 'outline';
@@ -86,15 +87,13 @@ const Footer: React.FC<{
                   {
                       label: 'Next',
                       type: 'filled',
-                      onClick: () => {
-                          console.log('Next');
-                      },
+                      onClick: onNext,
                       disabled: false,
                       loading: false,
                   },
               ]
             : [];
-    }, [selectedIntegration, onBack]);
+    }, [selectedIntegration, onBack, onNext]);
 
     return (
         <Spacer direction="horizontal" size={0} justifyContent="space-between">
@@ -106,7 +105,7 @@ const Footer: React.FC<{
                             {buttons.map((button) => (
                                 <Button
                                     key={button.label}
-                                    size="medium"
+                                    size="small"
                                     type={button.type}
                                     onClick={button.onClick}
                                     disabled={button.disabled}
@@ -126,6 +125,13 @@ const Footer: React.FC<{
 
 export const IntegrationPicker: React.FC<IntegrationPickerProps> = ({ token, baseUrl }) => {
     const [selectedIntegration, setSelectedIntegration] = useState<Integration | null>(null);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [error, setError] = useState<{
+        message: string;
+        provider_response: string;
+    }>();
+    const [success, setSuccess] = useState<boolean>(false);
+    const [data, setData] = useState<Record<string, string>>({});
 
     const {
         data: hubData,
@@ -168,11 +174,50 @@ export const IntegrationPicker: React.FC<IntegrationPickerProps> = ({ token, bas
         };
     }, [connectorData, selectedIntegration]);
 
+    const handleConnect = useCallback(async () => {
+        if (!selectedIntegration) {
+            return;
+        }
+
+        setError(undefined);
+        setLoading(true);
+        await connectAccount(baseUrl, token, selectedIntegration.provider, data)
+            .then(() => {
+                setSuccess(true);
+            })
+            .catch((error) => {
+                const parsedError = JSON.parse(error.message) as {
+                    status: number;
+                    message: string;
+                };
+
+                const doubleParsedError = JSON.parse(parsedError.message) as {
+                    message: string;
+                    provider_response: string;
+                };
+
+                setError({
+                    message: doubleParsedError.message,
+                    provider_response: doubleParsedError.provider_response,
+                });
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    }, [baseUrl, token, selectedIntegration, data]);
+
     if (isLoadingHubData || isLoadingConnectorData) {
         return <div>Loading...</div>;
     }
     if (errorHubData || errorConnectorData) {
         return <div>Error: {errorHubData?.message || errorConnectorData?.message}</div>;
+    }
+
+    if (success) {
+        return <div>Successfully connected to {selectedIntegration?.provider}</div>;
+    }
+    if (loading) {
+        return <div>Loading...</div>;
     }
 
     return (
@@ -182,6 +227,7 @@ export const IntegrationPicker: React.FC<IntegrationPickerProps> = ({ token, bas
                 <Footer
                     selectedIntegration={selectedIntegration}
                     onBack={() => setSelectedIntegration(null)}
+                    onNext={handleConnect}
                 />
             }
             title={
@@ -204,12 +250,7 @@ export const IntegrationPicker: React.FC<IntegrationPickerProps> = ({ token, bas
                 <div>No integrations found.</div>
             )}
             {connectorData && selectedIntegration && (
-                <IntegrationForm
-                    integration={selectedIntegration}
-                    token={token}
-                    baseUrl={baseUrl}
-                    fields={fields}
-                />
+                <IntegrationForm fields={fields} error={error} onChange={setData} guide={guide} />
             )}
         </Card>
     );
