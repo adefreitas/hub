@@ -2,7 +2,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { CsvImporter } from './modules/csv-importer.tsx/CsvImporter';
 import { IntegrationPicker } from './modules/integration-picker/IntegrationPicker';
 import { HubModes } from './types/types';
-import { ThemeProvider } from '@stackone/malachite';
+import { Card, ThemeProvider } from '@stackone/malachite';
+import ErrorBoundary from './shared/components/errorBoundary';
+import ErrorContainer from './shared/components/error';
 
 interface StackOneHubProps {
     mode?: HubModes;
@@ -43,12 +45,20 @@ export const StackOneHub: React.FC<StackOneHubProps> = ({
 
     return (
         <ThemeProvider theme={theme}>
-            <QueryClientProvider client={queryClient}>
-                {mode === 'integration-picker' && (
-                    <IntegrationPicker token={token} baseUrl={apiUrl} height={height} />
-                )}
-                {mode === 'csv-importer' && <CsvImporter height={height} />}
-            </QueryClientProvider>
+            <ErrorBoundary
+                fallback={
+                    <Card height={height}>
+                        <ErrorContainer />
+                    </Card>
+                }
+            >
+                <QueryClientProvider client={queryClient}>
+                    {mode === 'integration-picker' && (
+                        <IntegrationPicker token={token} baseUrl={apiUrl} height={height} />
+                    )}
+                    {mode === 'csv-importer' && <CsvImporter height={height} />}
+                </QueryClientProvider>
+            </ErrorBoundary>
         </ThemeProvider>
     );
 };
