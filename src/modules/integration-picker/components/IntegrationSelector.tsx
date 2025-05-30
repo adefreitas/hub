@@ -15,10 +15,9 @@ import { CATEGORIES_WITH_LABELS } from '../../../shared/categories';
 
 interface IntegrationRowProps {
     integration: Integration;
-    onClick?: (integration: Integration) => void;
 }
 
-const IntegrationRow: React.FC<IntegrationRowProps> = ({ integration, onClick }) => {
+const IntegrationRow: React.FC<IntegrationRowProps> = ({ integration }) => {
     return (
         <Flex
             direction={FlexDirection.Horizontal}
@@ -65,12 +64,7 @@ export const IntegrationSelector: React.FC<{
                     ?.filter((integration) => integration.active && integration.name)
                     .map((integration) => ({
                         key: integration.provider,
-                        children: (
-                            <IntegrationRow
-                                integration={integration}
-                                onClick={(selectedIntegration) => onSelect(selectedIntegration)}
-                            />
-                        ),
+                        children: <IntegrationRow integration={integration} />,
                         onClick: () => onSelect(integration),
                     }))}
             />

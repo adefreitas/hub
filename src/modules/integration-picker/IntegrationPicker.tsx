@@ -19,7 +19,7 @@ import {
     Spinner,
     Typography,
 } from '@stackone/malachite';
-import { Loading } from './components/loading';
+import { Loading } from '../../shared/components/loading';
 
 interface IntegrationPickerProps {
     token: string;
