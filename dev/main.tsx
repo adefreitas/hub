@@ -1,3 +1,4 @@
+import './main.css';
 import { Button, ModeToggle } from '@stackone/malachite';
 import React, { useCallback, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom/client';
@@ -52,16 +53,18 @@ const HubWrapper: React.FC = () => {
     }, [fetchToken]);
 
     return (
-        <div>
+        <div className="hub-container">
             <p>Current mode: {mode || 'No mode selected'}</p>
             {loading && <p> Loading token...</p>}
             {error && <p>Error loading token: {error}</p>}
-            {token && <p>Token: {token}</p>}
-            <button onClick={fetchToken}>Fetch Token</button>
-            <button onClick={() => setMode('integration-picker')}>
-                Set Integration Picker mode
-            </button>
-            <button onClick={() => setMode('csv-importer')}>Set CSV Importer mode</button>
+            {token && <p className="token-display">Token: {token}</p>}
+            <div className="button-row">
+                <button onClick={fetchToken}>Fetch Token</button>
+                <button onClick={() => setMode('integration-picker')}>
+                    Set Integration Picker mode
+                </button>
+                <button onClick={() => setMode('csv-importer')}>Set CSV Importer mode</button>
+            </div>
             <h1>StackOneHub Demo</h1>
             <ThemeProvider>
                 <div>
