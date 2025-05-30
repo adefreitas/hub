@@ -11,7 +11,7 @@ interface CsvImporterProps {
     height?: string;
 }
 
-export const CsvImporter: React.FC<CsvImporterProps> = ({ height = '400px' }) => {
+export const CsvImporter: React.FC<CsvImporterProps> = ({ height }) => {
     return (
         <Card
             title={

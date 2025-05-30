@@ -1,11 +1,9 @@
 import './main.css';
-import { Button, ModeToggle } from '@stackone/malachite';
 import React, { useCallback, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import { StackOneHub } from '../src/StackOneHub';
 import { HubModes } from '../src/types/types';
 import { request } from '../src/shared/httpClient';
-import { ThemeProvider } from '@stackone/malachite';
 
 const HubWrapper: React.FC = () => {
     const [mode, setMode] = useState<HubModes>('integration-picker');
@@ -13,6 +11,7 @@ const HubWrapper: React.FC = () => {
     const [error, setError] = useState<string>();
     const [token, setToken] = useState<string>();
     const apiUrl = import.meta.env.VITE_API_URL ?? 'https://api.stackone.com';
+    const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
     const fetchToken = useCallback(async () => {
         try {
@@ -53,28 +52,23 @@ const HubWrapper: React.FC = () => {
     }, [fetchToken]);
 
     return (
-        <div className="hub-container">
-            <p>Current mode: {mode || 'No mode selected'}</p>
+        <div className={`hub-container ${theme}`}>
             {loading && <p> Loading token...</p>}
             {error && <p>Error loading token: {error}</p>}
             {token && <p className="token-display">Token: {token}</p>}
+            <p>Current mode: {mode || 'No mode selected'}</p>
             <div className="button-row">
-                <button onClick={fetchToken}>Fetch Token</button>
+                <button onClick={fetchToken}>Get new token</button>
                 <button onClick={() => setMode('integration-picker')}>
                     Set Integration Picker mode
                 </button>
                 <button onClick={() => setMode('csv-importer')}>Set CSV Importer mode</button>
+                <button onClick={() => setTheme((theme) => (theme === 'light' ? 'dark' : 'light'))}>
+                    {theme === 'light' ? '🌞' : '🌚'}
+                </button>
             </div>
             <h1>StackOneHub Demo</h1>
-            <ThemeProvider>
-                <div>
-                    <div>
-                        <ModeToggle />
-                        <div style={{ height: '25px' }} />
-                        <StackOneHub mode={mode} token={token} baseUrl={apiUrl} />
-                    </div>
-                </div>
-            </ThemeProvider>
+            <StackOneHub mode={mode} token={token} baseUrl={apiUrl} theme={theme} />
         </div>
     );
 };

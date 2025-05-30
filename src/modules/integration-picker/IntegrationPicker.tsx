@@ -13,7 +13,7 @@ import Success from '../../shared/components/success';
 interface IntegrationPickerProps {
     token: string;
     baseUrl: string;
-    height?: string;
+    height: string;
 }
 
 interface IntegrationPickerContentProps {
@@ -92,11 +92,7 @@ const IntegrationPickerContent: React.FC<IntegrationPickerContentProps> = ({
     return null;
 };
 
-export const IntegrationPicker: React.FC<IntegrationPickerProps> = ({
-    token,
-    baseUrl,
-    height = '400px',
-}) => {
+export const IntegrationPicker: React.FC<IntegrationPickerProps> = ({ token, baseUrl, height }) => {
     const [selectedIntegration, setSelectedIntegration] = useState<Integration | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<{

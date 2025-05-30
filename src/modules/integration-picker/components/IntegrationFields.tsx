@@ -1,5 +1,6 @@
-import { Alert, Input, Spacer, Typography } from '@stackone/malachite';
+import { Alert, Form, Input, Spacer, Typography } from '@stackone/malachite';
 import { ConnectorConfigField } from '../types';
+import { useState, useEffect } from 'react';
 
 interface IntegrationFieldsProps {
     fields: Array<ConnectorConfigField>;
@@ -10,26 +11,33 @@ interface IntegrationFieldsProps {
     };
     onChange: (data: Record<string, string>) => void;
 }
+
 export const IntegrationForm: React.FC<IntegrationFieldsProps> = ({
     fields,
     guide,
     onChange,
     error,
 }) => {
-    const handleOnChange = (event: React.ChangeEvent<HTMLFormElement>) => {
-        const formData = new FormData(event.currentTarget);
-        const data: Record<string, string> = {};
+    // Initialize formData with default values from fields
+    const [formData, setFormData] = useState<Record<string, string>>(() => {
+        const initialData: Record<string, string> = {};
         fields.forEach((field) => {
-            const value = formData.get(field.key);
-            if (value !== null) {
-                data[field.key] = value.toString();
+            if (field.value !== undefined) {
+                initialData[field.key] = field.value.toString();
             }
         });
-        console.log('handleOnChange', {
-            data,
-            formData,
-        });
-        onChange(data);
+        return initialData;
+    });
+
+    useEffect(() => {
+        onChange(formData);
+    }, [formData, onChange]);
+
+    const handleFieldChange = (key: string, value: string) => {
+        setFormData((prev) => ({
+            ...prev,
+            [key]: value,
+        }));
     };
 
     return (
@@ -38,8 +46,8 @@ export const IntegrationForm: React.FC<IntegrationFieldsProps> = ({
                 {guide && <Alert type="info" message={guide?.description} hasMargin={false} />}
                 {error && <Alert type="error" message={error.message} hasMargin={false} />}
                 {error && <Typography.CodeText>{error.provider_response}</Typography.CodeText>}
-                <form onChange={handleOnChange}>
-                    <Spacer direction="vertical" size={20}>
+                <Spacer direction="vertical" size={20}>
+                    <Form>
                         {fields.map((field) => {
                             return (
                                 <div key={field.key}>
@@ -52,6 +60,9 @@ export const IntegrationForm: React.FC<IntegrationFieldsProps> = ({
                                             required={field.required}
                                             placeholder={field.placeholder}
                                             defaultValue={field.value?.toString()}
+                                            onChange={(value) =>
+                                                handleFieldChange(field.key, value)
+                                            }
                                             disabled={field.readOnly}
                                             label={field.label}
                                             tooltip={field.guide?.tooltip}
@@ -63,7 +74,10 @@ export const IntegrationForm: React.FC<IntegrationFieldsProps> = ({
                                         <select
                                             name={field.key}
                                             required={field.required}
-                                            value={field.value}
+                                            value={formData[field.key] || ''}
+                                            onChange={(e) =>
+                                                handleFieldChange(field.key, e.target.value)
+                                            }
                                             disabled={field.readOnly}
                                         >
                                             {field.options?.map((option) => (
@@ -76,8 +90,8 @@ export const IntegrationForm: React.FC<IntegrationFieldsProps> = ({
                                 </div>
                             );
                         })}
-                    </Spacer>
-                </form>
+                    </Form>
+                </Spacer>
             </Spacer>
         </div>
     );

@@ -6,7 +6,7 @@ body {
 }
 
 .hub-container {
-    max-width: 900px;
+    max-width: 600px;
     margin: 40px auto;
     background: #fff;
     border-radius: 12px;
@@ -64,4 +64,17 @@ button:hover {
     h1 {
         font-size: 2rem;
     }
+}
+
+.hub-container.dark {
+    background: #121212;
+    color: #fff;
+    .token-display {
+        background: #333;
+        color: #fff;
+    }
+}
+
+body {
+    background: goldenrod;
 }

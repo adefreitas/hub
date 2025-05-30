@@ -2,14 +2,23 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { CsvImporter } from './modules/csv-importer.tsx/CsvImporter';
 import { IntegrationPicker } from './modules/integration-picker/IntegrationPicker';
 import { HubModes } from './types/types';
+import { ThemeProvider } from '@stackone/malachite';
 
 interface StackOneHubProps {
     mode?: HubModes;
     token?: string;
     baseUrl?: string;
+    height?: string;
+    theme?: 'light' | 'dark';
 }
 
-export const StackOneHub: React.FC<StackOneHubProps> = ({ mode, token, baseUrl }) => {
+export const StackOneHub: React.FC<StackOneHubProps> = ({
+    mode,
+    token,
+    baseUrl,
+    height = '500px',
+    theme = 'light',
+}) => {
     const defaultBaseUrl = 'https://api.stackone.com';
     const apiUrl = baseUrl ?? defaultBaseUrl;
 
@@ -33,9 +42,13 @@ export const StackOneHub: React.FC<StackOneHubProps> = ({ mode, token, baseUrl }
     }
 
     return (
-        <QueryClientProvider client={queryClient}>
-            {mode === 'integration-picker' && <IntegrationPicker token={token} baseUrl={apiUrl} />}
-            {mode === 'csv-importer' && <CsvImporter />}
-        </QueryClientProvider>
+        <ThemeProvider theme={theme}>
+            <QueryClientProvider client={queryClient}>
+                {mode === 'integration-picker' && (
+                    <IntegrationPicker token={token} baseUrl={apiUrl} height={height} />
+                )}
+                {mode === 'csv-importer' && <CsvImporter height={height} />}
+            </QueryClientProvider>
+        </ThemeProvider>
     );
 };
