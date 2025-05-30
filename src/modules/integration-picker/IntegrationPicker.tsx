@@ -1,25 +1,14 @@
 import { useCallback, useMemo, useState } from 'react';
 import { IntegrationForm } from './components/IntegrationFields';
-import { IntegrationSelector } from './components/IntegrationSelector';
+import { IntegrationList } from './components/IntegrationList';
 import { connectAccount, getConnectorConfig, getHubData } from './queries';
-import { Integration } from './types';
+import { ConnectorConfig, ConnectorConfigField, HubData, Integration } from './types';
 import { useQuery } from '@tanstack/react-query';
-import {
-    Button,
-    Card,
-    CustomIcons,
-    Flex,
-    FlexAlign,
-    FlexDirection,
-    FlexGapSize,
-    FlexJustify,
-    FooterLinks,
-    Padded,
-    Spacer,
-    Spinner,
-    Typography,
-} from '@stackone/malachite';
+import { Card } from '@stackone/malachite';
 import { Loading } from '../../shared/components/loading';
+import CardTitle from './components/cardTitle';
+import CardFooter from './components/cardFooter';
+import Success from '../../shared/components/success';
 
 interface IntegrationPickerProps {
     token: string;
@@ -27,104 +16,80 @@ interface IntegrationPickerProps {
     height?: string;
 }
 
-const Title: React.FC<{
-    selectedIntegration: Integration;
-    onBack: () => void;
-    guide?: { supportLink?: string; description: string };
-}> = ({ selectedIntegration, onBack, guide }) => {
-    return (
-        <Flex
-            direction={FlexDirection.Horizontal}
-            align={FlexAlign.Center}
-            gapSize={FlexGapSize.Small}
-            justify={FlexJustify.SpaceBetween}
-        >
-            <Flex
-                direction={FlexDirection.Horizontal}
-                align={FlexAlign.Center}
-                gapSize={FlexGapSize.Small}
-                justify={FlexJustify.Left}
-            >
-                <Button type="ghost" onClick={onBack} icon="←" size="small"></Button>
-                <img
-                    src={`https://app.stackone.com/assets/logos/${selectedIntegration?.provider}.png`}
-                    alt={selectedIntegration?.provider ?? 'N/A'}
-                    style={{ width: '24px', height: '24px' }}
-                />
-                <Typography.Text fontWeight="semi-bold" size="large">
-                    {selectedIntegration?.name ?? 'N/A'}
-                </Typography.Text>
-            </Flex>
-            <Typography.Link href={guide?.supportLink} target="_blank">
-                <Button type="outline" size="medium">
-                    Connection guide
-                </Button>
-            </Typography.Link>
-        </Flex>
-    );
-};
-
-const Footer: React.FC<{
+interface IntegrationPickerContentProps {
+    isLoading: boolean;
+    hasError: boolean;
+    errorHubData: Error | null;
+    errorConnectorData: Error | null;
+    success: boolean;
+    loading: boolean;
     selectedIntegration: Integration | null;
-    fullWidth?: boolean;
-    onBack: () => void;
-    onNext: () => void;
-}> = ({ fullWidth = true, selectedIntegration, onBack, onNext }) => {
-    const buttons: Array<{
-        label: string;
-        type: 'filled' | 'outline';
-        onClick: () => void;
-        disabled: boolean;
-        loading: boolean;
-    }> = useMemo(() => {
-        return selectedIntegration
-            ? [
-                  {
-                      label: 'Back',
-                      type: 'outline',
-                      onClick: () => {
-                          onBack();
-                      },
-                      disabled: false,
-                      loading: false,
-                  },
-                  {
-                      label: 'Next',
-                      type: 'filled',
-                      onClick: onNext,
-                      disabled: false,
-                      loading: false,
-                  },
-              ]
-            : [];
-    }, [selectedIntegration, onBack, onNext]);
+    connectorData: ConnectorConfig | null;
+    hubData: HubData | null;
+    fields: ConnectorConfigField[];
+    error?: {
+        message: string;
+        provider_response: string;
+    };
+    guide?: { supportLink?: string; description: string };
+    onSelect: (integration: Integration) => void;
+    onChange: (data: Record<string, string>) => void;
+}
 
-    return (
-        <Spacer direction="horizontal" size={0} justifyContent="space-between">
-            <FooterLinks fullWidth={fullWidth} />
-            {buttons.length > 0 && (
-                <Padded vertical="medium" horizontal="medium" fullHeight={false}>
-                    <Flex direction={FlexDirection.Horizontal} justify={FlexJustify.Right}>
-                        <Spacer direction="horizontal" size={10}>
-                            {buttons.map((button) => (
-                                <Button
-                                    key={button.label}
-                                    size="small"
-                                    type={button.type}
-                                    onClick={button.onClick}
-                                    disabled={button.disabled}
-                                    loading={button.loading}
-                                    iconPosition="end"
-                                >
-                                    {button.label}
-                                </Button>
-                            ))}
-                        </Spacer>
-                    </Flex>
-                </Padded>
-            )}
-        </Spacer>
-    );
+const IntegrationPickerContent: React.FC<IntegrationPickerContentProps> = ({
+    isLoading,
+    hasError,
+    errorHubData,
+    errorConnectorData,
+    success,
+    loading,
+    selectedIntegration,
+    connectorData,
+    hubData,
+    fields,
+    error,
+    guide,
+    onSelect,
+    onChange,
+}) => {
+    if (isLoading) {
+        return (
+            <Loading
+                title="Loading integration data"
+                description="Please wait, this may take a moment."
+            />
+        );
+    }
+
+    if (hasError) {
+        return <div>Error: {errorHubData?.message || errorConnectorData?.message}</div>;
+    }
+
+    if (success && selectedIntegration) {
+        return <Success integrationName={selectedIntegration.name} />;
+    }
+
+    if (loading && selectedIntegration) {
+        return (
+            <Loading
+                title={`Connecting to ${selectedIntegration.name}`}
+                description="Please wait, this may take a moment."
+            />
+        );
+    }
+
+    if (!connectorData) {
+        if (!hubData?.integrations.length) {
+            return <div>No integrations found.</div>;
+        }
+        return <IntegrationList integrations={hubData.integrations} onSelect={onSelect} />;
+    }
+
+    if (selectedIntegration) {
+        return <IntegrationForm fields={fields} error={error} onChange={onChange} guide={guide} />;
+    }
+
+    return null;
 };
 
 export const IntegrationPicker: React.FC<IntegrationPickerProps> = ({
@@ -139,7 +104,7 @@ export const IntegrationPicker: React.FC<IntegrationPickerProps> = ({
         provider_response: string;
     }>();
     const [success, setSuccess] = useState<boolean>(false);
-    const [data, setData] = useState<Record<string, string>>({});
+    const [formData, setFormData] = useState<Record<string, string>>({});
 
     const {
         data: hubData,
@@ -156,20 +121,16 @@ export const IntegrationPicker: React.FC<IntegrationPickerProps> = ({
         error: errorConnectorData,
     } = useQuery({
         queryKey: ['connectorData', selectedIntegration?.provider],
-        queryFn: () => {
-            if (!selectedIntegration) {
-                return null;
-            }
-
-            return getConnectorConfig(baseUrl, token, selectedIntegration.provider);
-        },
+        queryFn: () =>
+            selectedIntegration
+                ? getConnectorConfig(baseUrl, token, selectedIntegration.provider)
+                : null,
+        enabled: !!selectedIntegration,
     });
 
     const { fields, guide } = useMemo(() => {
         if (!connectorData || !selectedIntegration) {
-            return {
-                fields: [],
-            };
+            return { fields: [] };
         }
 
         const authConfig =
@@ -183,53 +144,49 @@ export const IntegrationPicker: React.FC<IntegrationPickerProps> = ({
     }, [connectorData, selectedIntegration]);
 
     const handleConnect = useCallback(async () => {
-        if (!selectedIntegration) {
-            return;
-        }
+        if (!selectedIntegration) return;
 
-        console.log('handleConnect', {
-            selectedIntegration,
-            data,
-        });
         setError(undefined);
         setLoading(true);
-        await connectAccount(baseUrl, token, selectedIntegration.provider, data)
-            .then(() => {
-                setSuccess(true);
-            })
-            .catch((error) => {
-                const parsedError = JSON.parse(error.message) as {
-                    status: number;
-                    message: string;
-                };
 
-                const doubleParsedError = JSON.parse(parsedError.message) as {
-                    message: string;
-                    provider_response: string;
-                };
+        try {
+            await connectAccount(baseUrl, token, selectedIntegration.provider, formData);
+            setSuccess(true);
+        } catch (error) {
+            const parsedError = JSON.parse((error as Error).message) as {
+                status: number;
+                message: string;
+            };
 
-                setError({
-                    message: doubleParsedError.message,
-                    provider_response: doubleParsedError.provider_response,
-                });
-            })
-            .finally(() => {
-                setLoading(false);
+            const doubleParsedError = JSON.parse(parsedError.message) as {
+                message: string;
+                provider_response: string;
+            };
+
+            setError({
+                message: doubleParsedError.message,
+                provider_response: doubleParsedError.provider_response,
             });
-    }, [baseUrl, token, selectedIntegration, data]);
+        } finally {
+            setLoading(false);
+        }
+    }, [baseUrl, token, selectedIntegration, formData]);
+
+    const isLoading = isLoadingHubData || isLoadingConnectorData;
+    const hasError = !!(errorHubData || errorConnectorData);
 
     return (
         <Card
             footer={
-                <Footer
+                <CardFooter
                     selectedIntegration={selectedIntegration}
                     onBack={() => setSelectedIntegration(null)}
                     onNext={handleConnect}
                 />
             }
             title={
-                !selectedIntegration ? null : (
-                    <Title
+                selectedIntegration && (
+                    <CardTitle
                         selectedIntegration={selectedIntegration}
                         onBack={() => setSelectedIntegration(null)}
                         guide={guide}
@@ -238,53 +195,22 @@ export const IntegrationPicker: React.FC<IntegrationPickerProps> = ({
             }
             height={height}
         >
-            {isLoadingHubData ||
-                (isLoadingConnectorData && (
-                    <Loading
-                        title="Loading integration data"
-                        description="Please wait, this may take a moment."
-                    />
-                ))}
-            {(errorHubData || errorConnectorData) && (
-                <div>Error: {errorHubData?.message || errorConnectorData?.message}</div>
-            )}
-            {success && (
-                <Flex
-                    justify={FlexJustify.Center}
-                    align={FlexAlign.Center}
-                    direction={FlexDirection.Vertical}
-                    gapSize={FlexGapSize.Small}
-                    fullHeight
-                >
-                    <CustomIcons.CheckCircleFilledIcon />
-                    <Typography.Text fontWeight="bold" size="large">
-                        Connection Successful
-                    </Typography.Text>
-                    <Typography.SecondaryText>
-                        Account successfully connected to {selectedIntegration?.name}
-                    </Typography.SecondaryText>
-                </Flex>
-            )}
-            {loading && (
-                <Loading
-                    title={`Connecting to ${selectedIntegration?.name}`}
-                    description="Please wait, this may take a moment."
-                />
-            )}
-            {!loading && !success && !connectorData && (
-                <IntegrationSelector
-                    integrations={hubData?.integrations || []}
-                    onSelect={setSelectedIntegration}
-                />
-            )}
-            {!loading &&
-                !success &&
-                !connectorData &&
-                hubData &&
-                hubData.integrations.length === 0 && <div>No integrations found.</div>}
-            {!loading && !success && connectorData && selectedIntegration && (
-                <IntegrationForm fields={fields} error={error} onChange={setData} guide={guide} />
-            )}
+            <IntegrationPickerContent
+                isLoading={isLoading}
+                hasError={hasError}
+                errorHubData={errorHubData}
+                errorConnectorData={errorConnectorData}
+                success={success}
+                loading={loading}
+                selectedIntegration={selectedIntegration}
+                connectorData={connectorData ?? null}
+                hubData={hubData ?? null}
+                fields={fields}
+                error={error}
+                guide={guide}
+                onSelect={setSelectedIntegration}
+                onChange={setFormData}
+            />
         </Card>
     );
 };

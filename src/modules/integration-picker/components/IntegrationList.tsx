@@ -50,7 +50,7 @@ const IntegrationRow: React.FC<IntegrationRowProps> = ({ integration }) => {
     );
 };
 
-export const IntegrationSelector: React.FC<{
+export const IntegrationList: React.FC<{
     integrations: Integration[];
     onSelect: (integration: Integration) => void;
 }> = ({ integrations, onSelect }) => {
