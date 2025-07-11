@@ -1,42 +1,43 @@
 {
-  "name": "@stackone/hub",
-  "version": "0.0.0",
-  "description": "StackOne HUB",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rollup -c",
-    "dev": "vite",
-    "code:format": "biome format ./src ./dev",
-    "code:format:fix": "biome format --write ./src ./dev",
-    "lint": "biome lint --error-on-warnings ./src ./dev && biome check ./src ./dev",
-    "lint:fix": "biome lint --write ./src ./dev && biome check --write ./src ./dev"
-  },
-  "author": "StackOne",
-  "license": "MIT",
-  "dependencies": {
-    "@tanstack/react-query": "^5.77.2",
-    "react": "^18.0.0",
-    "react-dom": "^18.1.0"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "1.9.4",
-    "@rollup/plugin-commonjs": "^28.0.3",
-    "@rollup/plugin-node-resolve": "^16.0.1",
-    "@rollup/plugin-replace": "^6.0.2",
-    "@rollup/plugin-terser": "^0.4.4",
-    "@rollup/plugin-typescript": "^12.1.2",
-    "@types/node": "^22.15.17",
-    "@types/react": "^18.0.0",
-    "@types/react-dom": "^18.0.0",
-    "@vitejs/plugin-react-swc": "^3.9.0",
-    "react-to-webcomponent": "^2.0.1",
-    "rollup": "^4.40.2",
-    "rollup-plugin-delete": "^3.0.1",
-    "rollup-plugin-dts": "^6.2.1",
-    "rollup-plugin-peer-deps-external": "^2.2.4",
-    "rollup-plugin-postcss": "^4.0.2",
-    "tslib": "^2.8.1",
-    "typescript": "^5.8.3"
-  }
+    "name": "@stackone/hub",
+    "version": "0.0.1",
+    "description": "StackOne HUB",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build": "rollup -c",
+        "dev": "vite",
+        "code:format": "biome format ./src ./dev",
+        "code:format:fix": "biome format --write ./src ./dev",
+        "lint": "biome lint --error-on-warnings ./src ./dev && biome check ./src ./dev",
+        "lint:fix": "biome lint --write ./src ./dev && biome check --write ./src ./dev",
+        "publish-release": "npm publish"
+    },
+    "author": "StackOne",
+    "license": "MIT",
+    "dependencies": {
+        "@tanstack/react-query": "^5.77.2",
+        "react": "^18.0.0",
+        "react-dom": "^18.1.0"
+    },
+    "devDependencies": {
+        "@biomejs/biome": "1.9.4",
+        "@rollup/plugin-commonjs": "^28.0.3",
+        "@rollup/plugin-node-resolve": "^16.0.1",
+        "@rollup/plugin-replace": "^6.0.2",
+        "@rollup/plugin-terser": "^0.4.4",
+        "@rollup/plugin-typescript": "^12.1.2",
+        "@types/node": "^22.15.17",
+        "@types/react": "^18.0.0",
+        "@types/react-dom": "^18.0.0",
+        "@vitejs/plugin-react-swc": "^3.9.0",
+        "react-to-webcomponent": "^2.0.1",
+        "rollup": "^4.40.2",
+        "rollup-plugin-delete": "^3.0.1",
+        "rollup-plugin-dts": "^6.2.1",
+        "rollup-plugin-peer-deps-external": "^2.2.4",
+        "rollup-plugin-postcss": "^4.0.2",
+        "tslib": "^2.8.1",
+        "typescript": "^5.8.3"
+    }
 }
