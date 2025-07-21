@@ -4,7 +4,7 @@ import {
     FlexAlign,
     FlexJustify,
     FooterLinks,
-    ThemeProvider,
+    MalachiteContext,
     Typography,
 } from '@stackone/malachite';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -72,7 +72,7 @@ export const StackOneHub: React.FC<StackOneHubProps> = ({
     }
 
     return (
-        <ThemeProvider theme={theme}>
+        <MalachiteContext>
             <ErrorBoundary
                 fallback={
                     <Card height={height}>
@@ -94,6 +94,6 @@ export const StackOneHub: React.FC<StackOneHubProps> = ({
                     )}
                 </QueryClientProvider>
             </ErrorBoundary>
-        </ThemeProvider>
+        </MalachiteContext>
     );
 };
