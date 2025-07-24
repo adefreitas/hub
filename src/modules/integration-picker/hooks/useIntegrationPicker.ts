@@ -1,3 +1,4 @@
+import { evaluate } from '@stackone/expressions';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
@@ -106,33 +107,59 @@ export const useIntegrationPicker = ({
         }
 
         const authConfig =
-            connectorData.authentication?.[selectedIntegration.authentication_config_key];
+            connectorData.config.authentication?.[selectedIntegration.authentication_config_key];
         const authConfigForEnvironment = authConfig?.[selectedIntegration.environment];
 
         const baseFields = authConfigForEnvironment?.fields || [];
 
-        const fieldsWithPrefilledValues = baseFields.map((field) => {
-            const setupValue = accountData?.setupInformation?.[field.key];
+        const fieldsWithPrefilledValues = baseFields
+            .map((field) => {
+                const setupValue = accountData?.setupInformation?.[field.key];
 
-            if (accountData && (field.secret || field.type === 'password')) {
+                if (accountData && (field.secret || field.type === 'password')) {
+                    return {
+                        ...field,
+                        value: DUMMY_VALUE,
+                    };
+                }
+
+                if (field.key === 'external-trigger-token') {
+                    return {
+                        ...field,
+                        value: hubData?.external_trigger_token,
+                    };
+                }
+
+                const evaluationContext = {
+                    ...formData,
+                    ...accountData?.setupInformation,
+                    external_trigger_token: hubData?.external_trigger_token,
+                    hub_settings: connectorData.hub_settings,
+                };
+
+                if (field.condition) {
+                    const evaluated = evaluate(field.condition, evaluationContext);
+
+                    const shouldShow = evaluated != null && evaluated !== 'false';
+
+                    if (!shouldShow) {
+                        return;
+                    }
+                }
+
+                if (!field.value) {
+                    return field;
+                }
+
+                const valueToEvaluate = setupValue !== undefined ? setupValue : field.value;
+                const evaluatedValue = evaluate(valueToEvaluate?.toString(), evaluationContext);
+
                 return {
                     ...field,
-                    value: DUMMY_VALUE,
+                    value: evaluatedValue,
                 };
-            }
-
-            if (field.key === 'external-trigger-token') {
-                return {
-                    ...field,
-                    value: hubData?.external_trigger_token,
-                };
-            }
-
-            return {
-                ...field,
-                value: setupValue !== undefined ? setupValue : field.value,
-            };
-        });
+            })
+            .filter((value) => value != null);
 
         return {
             fields: fieldsWithPrefilledValues,

@@ -54,20 +54,40 @@ export const StackOneHub: React.FC<StackOneHubProps> = ({
 
     if (!token) {
         return (
-            <Card height={height} footer={<FooterLinks />}>
-                <Flex justify={FlexJustify.Center} align={FlexAlign.Center} fullHeight>
-                    <Typography.PageTitle>No token provided</Typography.PageTitle>
-                </Flex>
-            </Card>
+            <MalachiteContext>
+                <ErrorBoundary
+                    fallback={
+                        <Card height={height}>
+                            <ErrorContainer />
+                        </Card>
+                    }
+                >
+                    <Card height={height} footer={<FooterLinks />}>
+                        <Flex justify={FlexJustify.Center} align={FlexAlign.Center} fullHeight>
+                            <Typography.PageTitle>No token provided</Typography.PageTitle>
+                        </Flex>
+                    </Card>
+                </ErrorBoundary>
+            </MalachiteContext>
         );
     }
     if (!mode) {
         return (
-            <Card height={height} footer={<FooterLinks />}>
-                <Flex justify={FlexJustify.Center} align={FlexAlign.Center} fullHeight>
-                    <Typography.PageTitle>No mode selected</Typography.PageTitle>
-                </Flex>
-            </Card>
+            <MalachiteContext>
+                <ErrorBoundary
+                    fallback={
+                        <Card height={height}>
+                            <ErrorContainer />
+                        </Card>
+                    }
+                >
+                    <Card height={height} footer={<FooterLinks />}>
+                        <Flex justify={FlexJustify.Center} align={FlexAlign.Center} fullHeight>
+                            <Typography.PageTitle>No mode selected</Typography.PageTitle>
+                        </Flex>
+                    </Card>
+                </ErrorBoundary>
+            </MalachiteContext>
         );
     }
 

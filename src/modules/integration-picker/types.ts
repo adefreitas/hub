@@ -54,6 +54,14 @@ export interface ConnectorConfig {
     };
 }
 
+export interface HubConnectorConfig {
+    config: ConnectorConfig;
+    hub_settings: {
+        configured_webhook_events: Record<string, Set<string>>;
+        project_settings: Record<string, string | object>;
+    };
+}
+
 export interface AccountData {
     account_id: string;
     provider: string;

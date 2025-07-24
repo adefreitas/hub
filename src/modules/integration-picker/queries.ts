@@ -1,5 +1,5 @@
 import { getRequest, patchRequest, postRequest } from '../../shared/httpClient';
-import { AccountData, ConnectorConfig, HubData } from './types';
+import { AccountData, ConnectorConfig, HubConnectorConfig, HubData } from './types';
 
 export const getHubData = async (token: string, baseUrl: string, provider?: string) => {
     const headers: Record<string, string> = {
@@ -19,7 +19,7 @@ export const getHubData = async (token: string, baseUrl: string, provider?: stri
 };
 
 export const getConnectorConfig = async (baseUrl: string, token: string, connectorKey: string) => {
-    return await getRequest<ConnectorConfig>({
+    return await getRequest<HubConnectorConfig>({
         url: `${baseUrl}/hub/connectors/${connectorKey}`,
         headers: {
             'Content-Type': 'application/json',
