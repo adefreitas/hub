@@ -36,6 +36,8 @@ export const useIntegrationPicker = ({
     const [selectedIntegration, setSelectedIntegration] = useState<Integration | null>(null);
     const [formData, setFormData] = useState<Record<string, string>>({});
     const connectWindow = useRef<Window | null>(null);
+    const checkStateTimeoutRef = useRef<number | null>(null);
+    const successTimeoutRef = useRef<number | null>(null);
     const [connectionState, setConnectionState] = useState<{
         loading: boolean;
         success: boolean;
@@ -47,6 +49,17 @@ export const useIntegrationPicker = ({
         loading: false,
         success: false,
     });
+
+    useEffect(() => {
+        return () => {
+            if (checkStateTimeoutRef.current !== null) {
+                clearTimeout(checkStateTimeoutRef.current);
+            }
+            if (successTimeoutRef.current !== null) {
+                clearTimeout(successTimeoutRef.current);
+            }
+        };
+    }, []);
 
     const processMessageCallback = useCallback((event: MessageEvent) => {
         if (event.data.type === EventType.AccountConnected) {
@@ -248,7 +261,7 @@ export const useIntegrationPicker = ({
                 let windowUrl = `${baseUrl}/connect/oauth2/${selectedIntegration.provider}?redirect_uri=${callbackEmbeddedAccountsUrl}&token=${token}`;
 
                 Object.keys(cleanedFormData).forEach((key) => {
-                    windowUrl += `&${key}=${cleanedFormData[key]}`;
+                    windowUrl += `&${key}=${encodeURIComponent(cleanedFormData[key])}`;
                 });
 
                 const width = 1024;
@@ -279,11 +292,18 @@ export const useIntegrationPicker = ({
                             setConnectionState({ loading: false, success: false });
                             window.removeEventListener('message', processMessageCallback, false);
                             connectWindow.current = null;
+                            if (checkStateTimeoutRef.current !== null) {
+                                clearTimeout(checkStateTimeoutRef.current);
+                                checkStateTimeoutRef.current = null;
+                            }
                         } else if (connectWindow.current) {
-                            setTimeout(checkWindowState, 1000);
+                            checkStateTimeoutRef.current = window.setTimeout(
+                                checkWindowState,
+                                1000,
+                            );
                         }
                     };
-                    setTimeout(checkWindowState, 1000);
+                    checkStateTimeoutRef.current = window.setTimeout(checkWindowState, 1000);
                 }
 
                 return;
@@ -302,8 +322,12 @@ export const useIntegrationPicker = ({
             }
 
             setConnectionState({ loading: false, success: true });
-            setTimeout(() => {
+            if (successTimeoutRef.current !== null) {
+                clearTimeout(successTimeoutRef.current);
+            }
+            successTimeoutRef.current = window.setTimeout(() => {
                 onSuccess?.();
+                successTimeoutRef.current = null;
             }, 2000);
         } catch (error) {
             const parsedError = JSON.parse((error as Error).message) as {
