@@ -13,6 +13,7 @@ import {
 } from '@stackone/malachite';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useEffect } from 'react';
+import { Hub } from './Hub';
 import { CsvImporter } from './modules/csv-importer.tsx/CsvImporter';
 import { IntegrationPicker } from './modules/integration-picker/IntegrationPicker';
 import ErrorContainer from './shared/components/error';
@@ -119,18 +120,17 @@ export const StackOneHub: React.FC<StackOneHubProps> = ({
                 }
             >
                 <QueryClientProvider client={queryClient}>
-                    {mode === 'integration-picker' && (
-                        <IntegrationPicker
-                            token={token}
-                            baseUrl={apiUrl}
-                            dashboardUrl={dashboardUrl}
-                            height={height}
-                            onSuccess={onSuccess}
-                            onClose={onClose}
-                            onCancel={onCancel}
-                            accountId={accountId}
-                        />
-                    )}
+                    <Hub
+                        mode={mode}
+                        token={token}
+                        apiUrl={apiUrl}
+                        dashboardUrl={dashboardUrl}
+                        height={height}
+                        onSuccess={onSuccess}
+                        accountId={accountId}
+                        onClose={onClose}
+                        onCancel={onCancel}
+                    />
                 </QueryClientProvider>
             </ErrorBoundary>
         </MalachiteContext>
