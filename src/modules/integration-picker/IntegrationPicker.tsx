@@ -1,4 +1,5 @@
 import { Card } from '@stackone/malachite';
+import useFeatureFlags from '../../shared/hooks/useFeatureFlags';
 import { IntegrationPickerContent } from './components/IntegrationPickerContent';
 import CardFooter from './components/cardFooter';
 import CardTitle from './components/cardTitle';
@@ -23,6 +24,8 @@ export const IntegrationPicker: React.FC<IntegrationPickerProps> = ({
     onSuccess,
     dashboardUrl,
 }) => {
+    const isHubLinkAccountReleaseEnabled = useFeatureFlags('hub_link_account_release');
+
     const {
         // Data
         hubData,
@@ -73,20 +76,22 @@ export const IntegrationPicker: React.FC<IntegrationPickerProps> = ({
             }
             height={height}
         >
-            <IntegrationPickerContent
-                isLoading={isLoading}
-                hasError={hasError}
-                connectionState={connectionState}
-                selectedIntegration={selectedIntegration}
-                connectorData={connectorData?.config ?? null}
-                hubData={hubData ?? null}
-                fields={fields}
-                guide={guide}
-                errorHubData={errorHubData}
-                errorConnectorData={errorConnectorData}
-                onSelect={setSelectedIntegration}
-                onChange={setFormData}
-            />
+            {isHubLinkAccountReleaseEnabled && (
+                <IntegrationPickerContent
+                    isLoading={isLoading}
+                    hasError={hasError}
+                    connectionState={connectionState}
+                    selectedIntegration={selectedIntegration}
+                    connectorData={connectorData?.config ?? null}
+                    hubData={hubData ?? null}
+                    fields={fields}
+                    guide={guide}
+                    errorHubData={errorHubData}
+                    errorConnectorData={errorConnectorData}
+                    onSelect={setSelectedIntegration}
+                    onChange={setFormData}
+                />
+            )}
         </Card>
     );
 };
