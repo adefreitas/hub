@@ -61,6 +61,7 @@ export const IntegrationPicker: React.FC<IntegrationPickerProps> = ({
             footer={
                 <CardFooter
                     selectedIntegration={selectedIntegration}
+                    isLoading={connectionState.loading}
                     onBack={accountData ? undefined : () => setSelectedIntegration(null)}
                     onNext={handleConnect}
                 />

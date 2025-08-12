@@ -13,6 +13,7 @@ import { Integration } from '../types';
 interface CardFooterProps {
     selectedIntegration: Integration | null;
     fullWidth?: boolean;
+    isLoading?: boolean;
     onBack?: () => void;
     onNext: () => void;
 }
@@ -20,11 +21,14 @@ interface CardFooterProps {
 const CardFooter: React.FC<CardFooterProps> = ({
     fullWidth = true,
     selectedIntegration,
+    isLoading,
     onBack,
     onNext,
 }) => {
     const buttons = useMemo(() => {
-        if (!selectedIntegration) return [];
+        if (!selectedIntegration || isLoading) {
+            return [];
+        }
 
         const buttons: Array<{
             label: string;
@@ -53,7 +57,7 @@ const CardFooter: React.FC<CardFooterProps> = ({
         });
 
         return buttons;
-    }, [selectedIntegration, onBack, onNext]);
+    }, [selectedIntegration, onBack, onNext, isLoading]);
 
     if (buttons.length === 0) {
         return <FooterLinks fullWidth={fullWidth} />;
