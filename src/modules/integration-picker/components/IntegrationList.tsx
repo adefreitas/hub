@@ -1,5 +1,7 @@
 import {
+    Button,
     ButtonList,
+    Divider,
     Flex,
     FlexAlign,
     FlexDirection,
@@ -7,10 +9,11 @@ import {
     FlexJustify,
     Input,
     Padded,
+    PillButton,
     Spacer,
     Typography,
 } from '@stackone/malachite';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { CATEGORIES_WITH_LABELS } from '../../../shared/categories';
 import { Integration } from '../types';
 
@@ -55,38 +58,61 @@ export const IntegrationList: React.FC<{
     integrations: Integration[];
     onSelect: (integration: Integration) => void;
 }> = ({ integrations, onSelect }) => {
-    const [availableIntegrations, setAvailableIntegrations] = useState<Integration[]>(
-        integrations.filter((integration) => integration.active && integration.name),
-    );
+    const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
-    const handleSearch = useCallback(
-        (value: string) => {
-            setAvailableIntegrations(
-                integrations.filter(
-                    (integration) =>
-                        integration.name?.toLowerCase().includes(value.toLowerCase()) &&
-                        integration.active &&
-                        integration.name,
-                ),
-            );
-        },
-        [integrations],
-    );
+    const [search, setSearch] = useState<string>('');
+
+    const availableIntegrations = useMemo(() => {
+        return integrations.filter(
+            (integration) =>
+                integration.active &&
+                integration.name &&
+                (selectedCategory ? integration.type === selectedCategory : true) &&
+                (search ? integration.name.toLowerCase().includes(search.toLowerCase()) : true),
+        );
+    }, [integrations, selectedCategory, search]);
+
+    const availableCategories = useMemo(() => {
+        return Array.from(new Set(integrations.map((integration) => integration.type)));
+    }, [integrations]);
 
     return (
         <>
             <Input
                 name="search"
                 placeholder="Search Integrations"
-                variant="underline"
+                variant="ghost"
                 size="large"
-                onChange={handleSearch}
+                onChange={setSearch}
             />
+            <Divider />
+            <Padded vertical="small" horizontal="medium" fullHeight={false}>
+                <Spacer direction="horizontal" size={4} align="start">
+                    {availableCategories.length > 1 &&
+                        availableCategories.map((category) => (
+                            <PillButton
+                                key={category}
+                                label={
+                                    CATEGORIES_WITH_LABELS.find((c) => c.value === category)
+                                        ?.label || category
+                                }
+                                selected={selectedCategory === category}
+                                onClick={() => {
+                                    if (selectedCategory === category) {
+                                        setSelectedCategory(null);
+                                    } else {
+                                        setSelectedCategory(category);
+                                    }
+                                }}
+                            />
+                        ))}
+                </Spacer>
+            </Padded>
+            <Divider />
             {availableIntegrations.length > 0 ? (
-                <Padded vertical="medium" horizontal="small" fullHeight={true}>
+                <Padded vertical="small" horizontal="small" fullHeight={true}>
                     <Spacer direction="vertical" size={10} align="start">
-                        {/* <Flex direction={FlexDirection.Vertical} fullHeight={true}> */}
-                        <Padded vertical="small" horizontal="small">
+                        <Padded vertical="none" horizontal="small">
                             <Typography.SecondaryText className="text-left">
                                 Add integration
                             </Typography.SecondaryText>
@@ -98,7 +124,6 @@ export const IntegrationList: React.FC<{
                                 onClick: () => onSelect(integration),
                             }))}
                         />
-                        {/* </Flex> */}
                     </Spacer>
                 </Padded>
             ) : (
