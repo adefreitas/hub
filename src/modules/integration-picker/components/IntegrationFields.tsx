@@ -1,4 +1,13 @@
-import { Alert, Dropdown, Form, Input, Spacer, TextArea, Typography } from '@stackone/malachite';
+import {
+    Alert,
+    Dropdown,
+    Form,
+    Input,
+    Padded,
+    Spacer,
+    TextArea,
+    Typography,
+} from '@stackone/malachite';
 import { useEffect, useState } from 'react';
 import { ConnectorConfigField } from '../types';
 
@@ -62,68 +71,72 @@ export const IntegrationForm: React.FC<IntegrationFieldsProps> = ({
     };
 
     return (
-        <Spacer direction="vertical" size={8} fullWidth>
-            {guide && <Alert type="info" message={guide?.description} hasMargin={false} />}
-            {error && <Alert type="error" message={error.message} hasMargin={false} />}
-            {error && <Typography.CodeText>{error.provider_response}</Typography.CodeText>}
-            <Spacer direction="vertical" size={20} fullWidth>
-                {fields.map((field) => {
-                    const key =
-                        typeof field.key === 'object'
-                            ? JSON.stringify(field.key)
-                            : String(field.key);
-                    return (
-                        <div key={key} style={{ width: '100%' }}>
-                            {(field.type === 'text' ||
-                                field.type === 'number' ||
-                                field.type === 'password') && (
-                                <Input
-                                    name={key}
-                                    required={field.required}
-                                    placeholder={field.placeholder}
-                                    defaultValue={field.value?.toString()}
-                                    onChange={(value: string) => handleFieldChange(key, value)}
-                                    disabled={field.readOnly}
-                                    label={field.label}
-                                    tooltip={field.guide?.tooltip}
-                                    description={field.guide?.description}
-                                    type={field.type}
-                                />
-                            )}
+        <Padded vertical="large" horizontal="medium">
+            <Spacer direction="vertical" size={8} fullWidth>
+                {guide && <Alert type="info" message={guide?.description} hasMargin={false} />}
+                {error && <Alert type="error" message={error.message} hasMargin={false} />}
+                {error && <Typography.CodeText>{error.provider_response}</Typography.CodeText>}
+                <Spacer direction="vertical" size={20} fullWidth>
+                    {fields.map((field) => {
+                        const key =
+                            typeof field.key === 'object'
+                                ? JSON.stringify(field.key)
+                                : String(field.key);
+                        return (
+                            <div key={key} style={{ width: '100%' }}>
+                                {(field.type === 'text' ||
+                                    field.type === 'number' ||
+                                    field.type === 'password') && (
+                                    <Input
+                                        name={key}
+                                        required={field.required}
+                                        placeholder={field.placeholder}
+                                        defaultValue={field.value?.toString()}
+                                        onChange={(value: string) => handleFieldChange(key, value)}
+                                        disabled={field.readOnly}
+                                        label={field.label}
+                                        tooltip={field.guide?.tooltip}
+                                        description={field.guide?.description}
+                                        type={field.type}
+                                    />
+                                )}
 
-                            {field.type === 'text_area' && (
-                                <TextArea
-                                    name={key}
-                                    required={field.required}
-                                    defaultValue={formData[key] || ''}
-                                    placeholder={field.placeholder}
-                                    onChange={(value: string) => handleFieldChange(key, value)}
-                                    disabled={field.readOnly}
-                                    label={field.label}
-                                    tooltip={field.guide?.tooltip}
-                                />
-                            )}
-                            {field.type === 'select' && (
-                                <Dropdown
-                                    defaultValue={formData[key] || ''}
-                                    disabled={field.readOnly}
-                                    items={
-                                        field.options?.map((option) => ({
-                                            id: option.value,
-                                            label: option.label,
-                                        })) ?? []
-                                    }
-                                    onItemSelected={(value) => handleFieldChange(key, value ?? '')}
-                                    name={key}
-                                    label={field.label}
-                                    tooltip={field.guide?.tooltip}
-                                    description={field.guide?.description}
-                                />
-                            )}
-                        </div>
-                    );
-                })}
+                                {field.type === 'text_area' && (
+                                    <TextArea
+                                        name={key}
+                                        required={field.required}
+                                        defaultValue={formData[key] || ''}
+                                        placeholder={field.placeholder}
+                                        onChange={(value: string) => handleFieldChange(key, value)}
+                                        disabled={field.readOnly}
+                                        label={field.label}
+                                        tooltip={field.guide?.tooltip}
+                                    />
+                                )}
+                                {field.type === 'select' && (
+                                    <Dropdown
+                                        defaultValue={formData[key] || ''}
+                                        disabled={field.readOnly}
+                                        items={
+                                            field.options?.map((option) => ({
+                                                id: option.value,
+                                                label: option.label,
+                                            })) ?? []
+                                        }
+                                        onItemSelected={(value) =>
+                                            handleFieldChange(key, value ?? '')
+                                        }
+                                        name={key}
+                                        label={field.label}
+                                        tooltip={field.guide?.tooltip}
+                                        description={field.guide?.description}
+                                    />
+                                )}
+                            </div>
+                        );
+                    })}
+                </Spacer>
             </Spacer>
-        </Spacer>
+        </Padded>
     );
 };

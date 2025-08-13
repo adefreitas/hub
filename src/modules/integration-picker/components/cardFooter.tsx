@@ -13,7 +13,7 @@ import { Integration } from '../types';
 interface CardFooterProps {
     selectedIntegration: Integration | null;
     fullWidth?: boolean;
-    isLoading?: boolean;
+    showActions?: boolean;
     onBack?: () => void;
     onNext: () => void;
 }
@@ -21,12 +21,12 @@ interface CardFooterProps {
 const CardFooter: React.FC<CardFooterProps> = ({
     fullWidth = true,
     selectedIntegration,
-    isLoading,
+    showActions,
     onBack,
     onNext,
 }) => {
     const buttons = useMemo(() => {
-        if (!selectedIntegration || isLoading) {
+        if (!selectedIntegration || !showActions) {
             return [];
         }
 
@@ -57,7 +57,7 @@ const CardFooter: React.FC<CardFooterProps> = ({
         });
 
         return buttons;
-    }, [selectedIntegration, onBack, onNext, isLoading]);
+    }, [selectedIntegration, onBack, onNext, showActions]);
 
     if (buttons.length === 0) {
         return <FooterLinks fullWidth={fullWidth} />;
@@ -66,7 +66,7 @@ const CardFooter: React.FC<CardFooterProps> = ({
     return (
         <Spacer direction="horizontal" size={0} justifyContent="space-between">
             <FooterLinks fullWidth={fullWidth} />
-            <Padded vertical="none" horizontal="medium" fullHeight={false}>
+            <Padded vertical="none" horizontal="small" fullHeight={false}>
                 <Flex direction={FlexDirection.Horizontal} justify={FlexJustify.Right}>
                     <Spacer direction="horizontal" size={10}>
                         {buttons.map((button) => (

@@ -5,9 +5,12 @@ import {
     FlexDirection,
     FlexGapSize,
     FlexJustify,
+    Input,
     Padded,
+    Spacer,
     Typography,
 } from '@stackone/malachite';
+import { useCallback, useState } from 'react';
 import { CATEGORIES_WITH_LABELS } from '../../../shared/categories';
 import { Integration } from '../types';
 
@@ -52,20 +55,57 @@ export const IntegrationList: React.FC<{
     integrations: Integration[];
     onSelect: (integration: Integration) => void;
 }> = ({ integrations, onSelect }) => {
+    const [availableIntegrations, setAvailableIntegrations] = useState<Integration[]>(
+        integrations.filter((integration) => integration.active && integration.name),
+    );
+
+    const handleSearch = useCallback(
+        (value: string) => {
+            setAvailableIntegrations(
+                integrations.filter(
+                    (integration) =>
+                        integration.name?.toLowerCase().includes(value.toLowerCase()) &&
+                        integration.active &&
+                        integration.name,
+                ),
+            );
+        },
+        [integrations],
+    );
+
     return (
         <>
-            <Padded vertical="medium" horizontal="small" fullHeight={false}>
-                <Typography.SecondaryText>Select integration</Typography.SecondaryText>
-            </Padded>
-            <ButtonList
-                buttons={integrations
-                    ?.filter((integration) => integration.active && integration.name)
-                    .map((integration) => ({
-                        key: integration.provider,
-                        children: <IntegrationRow integration={integration} />,
-                        onClick: () => onSelect(integration),
-                    }))}
+            <Input
+                name="search"
+                placeholder="Search Integrations"
+                variant="underline"
+                size="large"
+                onChange={handleSearch}
             />
+            {availableIntegrations.length > 0 ? (
+                <Padded vertical="medium" horizontal="small" fullHeight={true}>
+                    <Spacer direction="vertical" size={10} align="start">
+                        {/* <Flex direction={FlexDirection.Vertical} fullHeight={true}> */}
+                        <Padded vertical="small" horizontal="small">
+                            <Typography.SecondaryText className="text-left">
+                                Add integration
+                            </Typography.SecondaryText>
+                        </Padded>
+                        <ButtonList
+                            buttons={availableIntegrations.map((integration) => ({
+                                key: integration.provider,
+                                children: <IntegrationRow integration={integration} />,
+                                onClick: () => onSelect(integration),
+                            }))}
+                        />
+                        {/* </Flex> */}
+                    </Spacer>
+                </Padded>
+            ) : (
+                <Flex justify={FlexJustify.Center} align={FlexAlign.Center} fullHeight={true}>
+                    <Typography.SecondaryText>No integrations found</Typography.SecondaryText>
+                </Flex>
+            )}
         </>
     );
 };
