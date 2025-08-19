@@ -48,6 +48,7 @@ export const IntegrationPicker: React.FC<IntegrationPickerProps> = ({
         setSelectedIntegration,
         setFormData,
         handleConnect,
+        resetConnectionState,
     } = useIntegrationPicker({
         token,
         baseUrl,
@@ -56,13 +57,18 @@ export const IntegrationPicker: React.FC<IntegrationPickerProps> = ({
         dashboardUrl,
     });
 
+    const onBack = () => {
+        setSelectedIntegration(null);
+        resetConnectionState();
+    };
+
     return (
         <Card
             footer={
                 <CardFooter
                     selectedIntegration={selectedIntegration}
-                    isLoading={connectionState.loading}
-                    onBack={accountData ? undefined : () => setSelectedIntegration(null)}
+                    showActions={!connectionState.loading && !connectionState.success}
+                    onBack={accountData ? undefined : onBack}
                     onNext={handleConnect}
                 />
             }
@@ -70,12 +76,13 @@ export const IntegrationPicker: React.FC<IntegrationPickerProps> = ({
                 selectedIntegration && (
                     <CardTitle
                         selectedIntegration={selectedIntegration}
-                        onBack={accountData ? undefined : () => setSelectedIntegration(null)}
+                        onBack={accountData ? undefined : onBack}
                         guide={guide}
                     />
                 )
             }
             height={height}
+            padding="0"
         >
             {isHubLinkAccountReleaseEnabled && (
                 <IntegrationPickerContent

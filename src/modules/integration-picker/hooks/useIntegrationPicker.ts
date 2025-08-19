@@ -366,6 +366,10 @@ export const useIntegrationPicker = ({
     const isLoading = isLoadingHubData || isLoadingConnectorData || isLoadingAccountData;
     const hasError = !!(errorHubData || errorConnectorData || errorAccountData);
 
+    const resetConnectionState = useCallback(() => {
+        setConnectionState({ loading: false, success: false });
+    }, []);
+
     return {
         // Data
         hubData,
@@ -390,5 +394,6 @@ export const useIntegrationPicker = ({
         setSelectedIntegration,
         setFormData,
         handleConnect,
+        resetConnectionState,
     };
 };
