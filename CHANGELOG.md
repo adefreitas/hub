@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.3.0](https://github.com/StackOneHQ/hub/compare/hub-v0.2.1...hub-v0.3.0) (2025-08-19)
+
+
+### Features
+
+* add category filter ([e3f59ab](https://github.com/StackOneHQ/hub/commit/e3f59ab962d2dd5814c91d0e86c7c555090ee497))
+* add functioning integration searchbar ([acb17a4](https://github.com/StackOneHQ/hub/commit/acb17a466064bdc077720181bb337f475a5b5d37))
+* **ENG-10767:** filter integrations ([05d0dc6](https://github.com/StackOneHQ/hub/commit/05d0dc6fc0a4f59f32278c419e4aa58e462e1688))
+
 ## [0.2.1](https://github.com/StackOneHQ/hub/compare/hub-v0.2.0...hub-v0.2.1) (2025-08-13)
 
 
