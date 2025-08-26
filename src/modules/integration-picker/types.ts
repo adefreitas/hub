@@ -38,7 +38,7 @@ export interface ConnectorConfigField {
     };
 }
 
-export interface ConnectorConfig {
+export interface LegacyConnectorConfig {
     key: string;
     name: string;
     authentication: {
@@ -66,12 +66,23 @@ export interface FalconConnectorConfig {
     };
 }
 
+export type ConnectorConfig = LegacyConnectorConfig | FalconConnectorConfig;
+
 export interface HubConnectorConfig {
-    config: ConnectorConfig | FalconConnectorConfig;
+    config: ConnectorConfig;
     hub_settings: {
         configured_webhook_events: Record<string, Set<string>>;
         project_settings: Record<string, string | object>;
     };
+}
+
+// Type guards for safe type checking - using structural properties instead of explicit type field
+export function isLegacyConnectorConfig(config: ConnectorConfig): config is LegacyConnectorConfig {
+    return 'authentication' in config && !('configFields' in config);
+}
+
+export function isFalconConnectorConfig(config: ConnectorConfig): config is FalconConnectorConfig {
+    return 'configFields' in config && !('authentication' in config);
 }
 
 export interface AccountData {

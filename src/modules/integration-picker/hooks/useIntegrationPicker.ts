@@ -10,7 +10,12 @@ import {
     getLegacyConnectorConfig,
     updateAccount,
 } from '../queries';
-import { ConnectorConfigField, Integration } from '../types';
+import {
+    ConnectorConfigField,
+    Integration,
+    isFalconConnectorConfig,
+    isLegacyConnectorConfig,
+} from '../types';
 
 const DUMMY_VALUE = 'totally-fake-value';
 
@@ -171,7 +176,7 @@ export const useIntegrationPicker = ({
             return { fields };
         }
 
-        if ('configFields' in connectorData.config) {
+        if (isFalconConnectorConfig(connectorData.config)) {
             const fieldsWithPrefilledValues: ConnectorConfigField[] =
                 connectorData.config.configFields
                     .map((field) => {
@@ -319,7 +324,7 @@ export const useIntegrationPicker = ({
         if (!connectorData || !selectedIntegration) {
             return null;
         }
-        if ('authentication' in connectorData.config) {
+        if (isLegacyConnectorConfig(connectorData.config)) {
             return connectorData.config.authentication?.[
                 selectedIntegration.authentication_config_key
             ]?.[selectedIntegration.environment];
