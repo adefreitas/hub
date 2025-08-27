@@ -38,7 +38,7 @@ export interface ConnectorConfigField {
     };
 }
 
-export interface ConnectorConfig {
+export interface LegacyConnectorConfig {
     key: string;
     name: string;
     authentication: {
@@ -55,6 +55,19 @@ export interface ConnectorConfig {
     };
 }
 
+export interface FalconConnectorConfig {
+    key: string;
+    name: string;
+    type: 'oauth2' | 'custom';
+    configFields: Array<ConnectorConfigField>;
+    support: {
+        link: string;
+        description: string;
+    };
+}
+
+export type ConnectorConfig = LegacyConnectorConfig | FalconConnectorConfig;
+
 export interface HubConnectorConfig {
     config: ConnectorConfig;
     hub_settings: {
@@ -63,8 +76,18 @@ export interface HubConnectorConfig {
     };
 }
 
+// Type guards for safe type checking - using structural properties instead of explicit type field
+export function isLegacyConnectorConfig(config: ConnectorConfig): config is LegacyConnectorConfig {
+    return 'authentication' in config && !('configFields' in config);
+}
+
+export function isFalconConnectorConfig(config: ConnectorConfig): config is FalconConnectorConfig {
+    return 'configFields' in config && !('authentication' in config);
+}
+
 export interface AccountData {
     account_id: string;
     provider: string;
     setupInformation: Record<string, string>;
+    version: string;
 }
