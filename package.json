@@ -2,7 +2,18 @@
     "name": "@stackone/hub",
     "version": "0.3.0",
     "description": "StackOne HUB",
-    "main": "index.js",
+    "main": "dist/index.js",
+    "module": "dist/index.esm.js",
+    "types": "dist/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.esm.js",
+            "require": "./dist/index.js"
+        },
+        "./webcomponent": "./dist/webcomponent.js"
+    },
+    "files": ["dist"],
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "build": "rollup -c",
