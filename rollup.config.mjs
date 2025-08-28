@@ -9,31 +9,39 @@ import external from "rollup-plugin-peer-deps-external";
 import postcss from "rollup-plugin-postcss";
 
 export default [
-  // React Component Bundle (external React)
+  // Main React Component Bundle
   {
     input: "src/index.ts",
     output: [
       {
-        file: "dist/react/StackOneHub.esm.js",
+        file: "dist/index.esm.js",
         format: "esm",
       },
       {
-        file: "dist/react/StackOneHub.cjs.js",
+        file: "dist/index.js",
         format: "cjs",
       },
     ],
+    external: ["react", "react-dom", "react-hook-form"],
     plugins: [
-      del({ targets: "dist/react/*" }),
-      external(),
-      resolve(),
+      del({ targets: "dist/*" }),
+      resolve({
+        preferBuiltins: false,
+      }),
       commonjs(),
-      typescript({ tsconfig: "./tsconfig.json" }),
-      postcss(),
-      terser(),
+      typescript({ 
+        tsconfig: "./tsconfig.json",
+        declaration: false,
+      }),
+      postcss({
+        extract: false,
+        inject: true,
+      }),
       replace({
         preventAssignment: true,
         "process.env.NODE_ENV": JSON.stringify("production"),
       }),
+      terser(),
     ],
   },
 
@@ -41,32 +49,39 @@ export default [
   {
     input: "src/WebComponentWrapper.tsx",
     output: {
-      file: "dist/webcomponent/StackOneHub.web.js",
+      file: "dist/webcomponent.js",
       format: "iife",
       name: "StackOneHubWebComponent",
       sourcemap: true,
     },
     plugins: [
-      del({ targets: "dist/webcomponent/*" }), // Clean the dist folder before each build
-      resolve(),
+      resolve({
+        preferBuiltins: false,
+      }),
       commonjs(),
-      typescript({ tsconfig: "./tsconfig.json" }),
-      postcss(),
-      terser(),
+      typescript({ 
+        tsconfig: "./tsconfig.json",
+        declaration: false,
+      }),
+      postcss({
+        extract: false,
+        inject: true,
+      }),
       replace({
         preventAssignment: true,
         "process.env.NODE_ENV": JSON.stringify("production"),
       }),
+      terser(),
     ],
   },
 
-  // Declaration file bundle
+  // TypeScript declarations
   {
     input: "src/index.ts",
     output: {
       file: "dist/index.d.ts",
       format: "es",
     },
-    plugins: [del({ targets: "dist/index.d.ts" }), dts()],
+    plugins: [dts()],
   },
 ];
