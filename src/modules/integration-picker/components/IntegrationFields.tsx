@@ -1,4 +1,4 @@
-import { Alert, CodeBlock, Dropdown, Input, Padded, Spacer, TextArea } from '@stackone/malachite';
+import { Alert, CodeBlock, Dropdown, Form, Input, Padded, Spacer, TextArea } from '@stackone/malachite';
 import { useEffect, useState } from 'react';
 import { ConnectorConfigField } from '../types';
 
@@ -77,6 +77,7 @@ export const IntegrationForm: React.FC<IntegrationFieldsProps> = ({ fields, onCh
                     </Alert>
                 )}
                 <Spacer direction="vertical" size={20} fullWidth>
+                    <Form>
                     {fields.map((field) => {
                         const key =
                             typeof field.key === 'object'
@@ -133,8 +134,9 @@ export const IntegrationForm: React.FC<IntegrationFieldsProps> = ({ fields, onCh
                                     />
                                 )}
                             </div>
-                        );
-                    })}
+                            );
+                        })}
+                    </Form>
                 </Spacer>
             </Spacer>
         </Padded>
