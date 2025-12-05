@@ -366,6 +366,25 @@ export const useIntegrationPicker = ({
                     };
                 }
 
+                const evaluationContext = {
+                    ...formData,
+                    ...accountData?.setupInformation,
+                    external_trigger_token: hubData?.external_trigger_token,
+                    hub_settings: connectorData.hub_settings,
+                };
+
+                if (field.condition) {
+                    const evaluated = evaluate(field.condition, evaluationContext);
+
+                    const shouldShow = evaluated != null && evaluated !== 'false';
+
+                    return {
+                        ...field,
+                        key: field.key,
+                        display: shouldShow,
+                    };
+                }
+
                 if (accountData && (field.secret !== false || field.type === 'password')) {
                     const secretValue = accountData.secrets?.[field.key];
                     if (secretValue) {
@@ -380,23 +399,6 @@ export const useIntegrationPicker = ({
                         key: field.key,
                         value: '',
                     };
-                }
-
-                const evaluationContext = {
-                    ...formData,
-                    ...accountData?.setupInformation,
-                    external_trigger_token: hubData?.external_trigger_token,
-                    hub_settings: connectorData.hub_settings,
-                };
-
-                if (field.condition) {
-                    const evaluated = evaluate(field.condition, evaluationContext);
-
-                    const shouldShow = evaluated != null && evaluated !== 'false';
-
-                    if (!shouldShow) {
-                        return;
-                    }
                 }
 
                 const valueToEvaluate = setupValue !== undefined ? setupValue : field.value;
