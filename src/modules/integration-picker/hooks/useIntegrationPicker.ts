@@ -352,8 +352,8 @@ export const useIntegrationPicker = ({
             return {
                 fields: fieldsWithPrefilledValues,
                 guide: {
-                    supportLink: connectorData.config.support.link,
-                    description: connectorData.config.support.description,
+                    supportLink: connectorData.config.support?.link,
+                    description: connectorData.config.support?.description ?? '',
                 },
             };
         }
