@@ -89,9 +89,21 @@ export const useIntegrationPicker = ({
         [onSuccess],
     );
 
+    const allowedOrigins = useMemo(() => {
+        const origins = new Set([window.location.origin]);
+        if (dashboardUrl) {
+            try {
+                origins.add(new URL(dashboardUrl).origin);
+            } catch {
+                // ignore invalid URL
+            }
+        }
+        return origins;
+    }, [dashboardUrl]);
+
     const processMessageCallback = useCallback(
         (event: MessageEvent) => {
-            if (event.origin !== window.location.origin) {
+            if (!allowedOrigins.has(event.origin)) {
                 return;
             }
 
@@ -123,7 +135,7 @@ export const useIntegrationPicker = ({
 
             window.removeEventListener('message', processMessageCallback, false);
         },
-        [handleSuccess],
+        [handleSuccess, allowedOrigins],
     );
 
     const handleOAuthResultFromAnyChannel = useCallback(
