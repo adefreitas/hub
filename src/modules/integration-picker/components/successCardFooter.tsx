@@ -9,7 +9,7 @@ import {
 } from '@stackone/malachite';
 
 interface CardFooterProps {
-    onClose: () => void;
+    onClose?: () => void;
     showFooterLinks?: boolean;
 }
 
@@ -20,9 +20,11 @@ const SuccessCardFooter: React.FC<CardFooterProps> = ({ showFooterLinks = true, 
             <Padded vertical="none" horizontal="small" fullHeight={false}>
                 <Flex direction={FlexDirection.Horizontal} justify={FlexJustify.Right}>
                     <Spacer direction="horizontal" size={10}>
-                        <Button size="small" variant="filled" onClick={onClose}>
-                            Close
-                        </Button>
+                        {onClose && (
+                            <Button size="small" variant="filled" onClick={onClose}>
+                                Close
+                            </Button>
+                        )}
                     </Spacer>
                 </Flex>
             </Padded>

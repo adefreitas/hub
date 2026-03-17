@@ -94,7 +94,7 @@ export const IntegrationPicker: React.FC<IntegrationPickerProps> = ({
             footer={
                 connectionState.success ? (
                     <SuccessCardFooter
-                        onClose={() => onClose?.()}
+                        onClose={onClose}
                         showFooterLinks={showFooterLinks}
                     />
                 ) : (
