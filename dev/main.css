@@ -79,6 +79,38 @@ body {
     background: goldenrod;
 }
 
+.tab-bar {
+    display: flex;
+    gap: 0;
+    background: #1a1a2e;
+    padding: 12px 16px 0;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.tab-btn {
+    background: transparent;
+    color: #aaa;
+    border: none;
+    border-bottom: 3px solid transparent;
+    border-radius: 0;
+    padding: 8px 20px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s;
+}
+
+.tab-btn:hover {
+    background: transparent;
+    color: #fff;
+}
+
+.tab-btn.active {
+    color: #fff;
+    border-bottom-color: #2d72d9;
+}
+
 .hide-scrollbar::-webkit-scrollbar {
     display: none;
 }

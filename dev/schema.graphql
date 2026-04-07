@@ -1,0 +1,52 @@
+type Query {
+    viewer: Viewer
+}
+
+type Viewer {
+    stackOneProviders: [StackOneProvider!]!
+}
+
+type StackOneProvider {
+    key: String!
+    name: String!
+    version: String
+    integrationId: String
+}
+
+type Mutation {
+    createStackOneConnectSession(
+        input: CreateStackOneConnectSessionInput!
+    ): CreateStackOneConnectSessionPayload
+    confirmStackOneAccount(
+        input: ConfirmStackOneAccountInput!
+    ): ConfirmStackOneAccountPayload
+}
+
+input CreateStackOneConnectSessionInput {
+    provider: String!
+    providerVersion: String
+    integrationId: String
+}
+
+type CreateStackOneConnectSessionPayload {
+    token: String
+    errors: [String!]
+}
+
+input ConfirmStackOneAccountInput {
+    stackoneAccountId: String!
+    provider: String!
+}
+
+type StackOneAccount {
+    id: ID!
+    stackOneAccountId: String!
+    provider: String!
+    status: String!
+}
+
+type ConfirmStackOneAccountPayload {
+    stackOneAccount: StackOneAccount
+    errors: [String!]
+    viewer: Viewer
+}
