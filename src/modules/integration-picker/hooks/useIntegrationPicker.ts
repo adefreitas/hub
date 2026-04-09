@@ -338,7 +338,8 @@ export const useIntegrationPicker = ({
                             }
                         }
 
-                        const valueToEvaluate = setupValue !== undefined ? setupValue : field.value;
+                        const valueToEvaluate =
+                            !field.computed && setupValue !== undefined ? setupValue : field.value;
 
                         if (!valueToEvaluate) {
                             return {
@@ -435,7 +436,8 @@ export const useIntegrationPicker = ({
                     };
                 }
 
-                const valueToEvaluate = setupValue !== undefined ? setupValue : field.value;
+                const valueToEvaluate =
+                    !field.computed && setupValue !== undefined ? setupValue : field.value;
 
                 if (!valueToEvaluate) {
                     return {
