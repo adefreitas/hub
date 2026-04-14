@@ -44,6 +44,7 @@ interface UseIntegrationPickerProps {
     accountId?: string;
     onSuccess?: (account: { id: string; provider: string }) => void;
     dashboardUrl?: string;
+    debug?: boolean;
 }
 
 export enum EventType {
@@ -58,6 +59,7 @@ export const useIntegrationPicker = ({
     accountId,
     onSuccess,
     dashboardUrl,
+    debug,
 }: UseIntegrationPickerProps) => {
     const [selectedIntegration, setSelectedIntegration] = useState<Integration | null>(null);
     const [formData, setFormData] = useState<Record<string, string>>({});
@@ -70,7 +72,7 @@ export const useIntegrationPicker = ({
     const checkStateTimeoutRef = useRef<number | null>(null);
     const oauthChannelRef = useRef<BroadcastChannel | null>(null);
     const storageListenerRef = useRef<((event: StorageEvent) => void) | null>(null);
-    const [connectionState, setConnectionState] = useState<{
+    const [connectionState, _setConnectionState] = useState<{
         loading: boolean;
         success: boolean;
         error?: {
@@ -81,6 +83,12 @@ export const useIntegrationPicker = ({
         loading: false,
         success: false,
     });
+    const setConnectionState: typeof _setConnectionState = (value) => {
+        if (debug) {
+            console.trace('[hub] setConnectionState', typeof value === 'function' ? '(updater)' : value);
+        }
+        _setConnectionState(value);
+    };
     const handleSuccess = useCallback(
         (account: { id: string; provider: string }) => {
             setConnectionState({ loading: false, success: true });

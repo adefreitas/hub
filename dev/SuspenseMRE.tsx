@@ -1,6 +1,6 @@
 import { startTransition, Suspense, useCallback, useEffect, useState } from 'react';
 import { fetchQuery, graphql, RelayEnvironmentProvider, useLazyLoadQuery, useMutation, useRelayEnvironment } from 'react-relay';
-import { StackOneHub } from '@stackone/hub';
+import { StackOneHub } from '../src/StackOneHub';
 import { relayEnvironment } from './RelayEnvironment';
 
 const PROVIDER_KEY = 'jira';
@@ -196,14 +196,23 @@ function SuspenseMREContent() {
             )}
 
             {connectState.status === 'hub_open' && (
-                <StackOneHub
-                    key={connectState.token}
-                    token={connectState.token}
-                    onSuccess={handleSuccess}
-                    onClose={handleClose}
-                    baseUrl={apiUrl}
-                    appUrl={appUrl}
-                />
+                <div>
+                    <button
+                        onClick={() => setConnectState({ status: 'hub_open', token: 'invalid-token' })}
+                        style={{ marginBottom: 8, padding: '4px 8px', background: '#fdd', border: '1px solid #f99', borderRadius: 4, cursor: 'pointer', fontFamily: 'monospace', fontSize: 12 }}
+                    >
+                        simulate token expiry
+                    </button>
+                    <StackOneHub
+                        key={connectState.token}
+                        token={connectState.token}
+                        onSuccess={handleSuccess}
+                        onClose={handleClose}
+                        baseUrl={apiUrl}
+                        appUrl={appUrl}
+                        debug
+                    />
+                </div>
             )}
         </div>
     );
@@ -218,7 +227,7 @@ function BackgroundPoller() {
                 next: () => console.log('[BackgroundPoller] store updated'),
                 error: console.error,
             });
-        }, 3000);
+        }, 15000);
         return () => clearInterval(interval);
     }, [environment]);
     return null;
