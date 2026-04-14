@@ -1,6 +1,5 @@
 import { Card } from '@stackone/malachite';
 import { useCallback, useMemo, useState } from 'react';
-import useFeatureFlags from '../../shared/hooks/useFeatureFlags';
 import { IntegrationPickerContent } from './components/IntegrationPickerContent';
 import { IntegrationPickerTitle } from './components/IntegrationPickerTitle';
 import CardFooter from './components/cardFooter';
@@ -17,6 +16,7 @@ interface IntegrationPickerProps {
     onClose?: () => void;
     showFooterLinks?: boolean;
     onCloseLabel?: string;
+    debug?: boolean;
 }
 
 export const IntegrationPicker: React.FC<IntegrationPickerProps> = ({
@@ -29,8 +29,8 @@ export const IntegrationPicker: React.FC<IntegrationPickerProps> = ({
     dashboardUrl,
     showFooterLinks = true,
     onCloseLabel,
+    debug,
 }) => {
-    const isHubLinkAccountReleaseEnabled = useFeatureFlags('hub_link_account_release');
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
     const [search, setSearch] = useState<string>('');
 
@@ -67,6 +67,7 @@ export const IntegrationPicker: React.FC<IntegrationPickerProps> = ({
         accountId,
         onSuccess,
         dashboardUrl,
+        debug,
     });
 
     const handleValidationChange = useCallback(
@@ -141,26 +142,24 @@ export const IntegrationPicker: React.FC<IntegrationPickerProps> = ({
                       }
             }
         >
-            {isHubLinkAccountReleaseEnabled && (
-                <IntegrationPickerContent
-                    isLoading={isLoading}
-                    hasError={hasError}
-                    connectionState={connectionState}
-                    selectedIntegration={selectedIntegration}
-                    connectorData={connectorData?.config ?? null}
-                    hubData={hubData ?? null}
-                    fields={fields}
-                    errorHubData={(errorHubData as Error) ?? null}
-                    errorConnectorData={(errorConnectorData as Error) ?? null}
-                    onSelect={setSelectedIntegration}
-                    onChange={setFormData}
-                    onValidationChange={handleValidationChange}
-                    selectedCategory={selectedCategory}
-                    search={search}
-                    editingSecrets={editingSecrets}
-                    setEditingSecrets={setEditingSecrets}
-                />
-            )}
+            <IntegrationPickerContent
+                isLoading={isLoading}
+                hasError={hasError}
+                connectionState={connectionState}
+                selectedIntegration={selectedIntegration}
+                connectorData={connectorData?.config ?? null}
+                hubData={hubData ?? null}
+                fields={fields}
+                errorHubData={(errorHubData as Error) ?? null}
+                errorConnectorData={(errorConnectorData as Error) ?? null}
+                onSelect={setSelectedIntegration}
+                onChange={setFormData}
+                onValidationChange={handleValidationChange}
+                selectedCategory={selectedCategory}
+                search={search}
+                editingSecrets={editingSecrets}
+                setEditingSecrets={setEditingSecrets}
+            />
         </Card>
     );
 };

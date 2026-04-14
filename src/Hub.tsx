@@ -16,6 +16,7 @@ interface HubProps {
     onCloseLabel?: string;
     accountId?: string;
     showFooterLinks?: boolean;
+    debug?: boolean;
 }
 export const Hub = memo(
     ({
@@ -29,6 +30,7 @@ export const Hub = memo(
         accountId,
         showFooterLinks,
         onCloseLabel,
+        debug,
     }: HubProps) => {
         const { data: settings } = useQuery({
             queryKey: ['settings'],
@@ -48,6 +50,7 @@ export const Hub = memo(
                         onCloseLabel={onCloseLabel}
                         accountId={accountId ?? settings?.existing_account_id}
                         showFooterLinks={showFooterLinks}
+                        debug={debug}
                     />
                 )}
             </FeatureFlagProvider>

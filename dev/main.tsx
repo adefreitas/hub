@@ -4,6 +4,9 @@ import ReactDOM from 'react-dom/client';
 import { StackOneHub } from '../src/StackOneHub';
 import { request } from '../src/shared/httpClient';
 import { HubModes } from '../src/types/types';
+import { SuspenseMRE } from './SuspenseMRE';
+
+type Tab = 'default' | 'suspense-mre';
 
 const HubWrapper: React.FC = () => {
     const [mode, setMode] = useState<HubModes | undefined>(undefined);
@@ -14,6 +17,9 @@ const HubWrapper: React.FC = () => {
     const appUrl = import.meta.env.VITE_APP_URL ?? 'https://app.stackone.com';
     const [theme, setTheme] = useState<'light' | 'dark'>('light');
     const [accountId, setAccountId] = useState<string>();
+    const [integrationId, setIntegrationId] = useState<string>(
+        import.meta.env.VITE_INTEGRATION_ID ?? 'b6d98311-d01d-4d4a-af1a-8430a8be02e6',
+    );
     const [originOwnerId, setOriginOwnerId] = useState<string>(
         import.meta.env.VITE_ORIGIN_OWNER_ID ?? 'dummy_customer_id',
     );
@@ -43,6 +49,8 @@ const HubWrapper: React.FC = () => {
                     origin_owner_name: originOwnerName,
                     origin_username: originUsername,
                     account_id: accountId !== '' && accountId != null ? accountId : undefined,
+                    integration_id:
+                        integrationId !== '' && integrationId != null ? integrationId : undefined,
                 },
             });
             if (!response) {
@@ -56,7 +64,7 @@ const HubWrapper: React.FC = () => {
         } finally {
             setLoading(false);
         }
-    }, [accountId, originOwnerId, originOwnerName, originUsername]);
+    }, [accountId, integrationId, originOwnerId, originOwnerName, originUsername]);
 
     useEffect(() => {
         fetchToken();
@@ -125,6 +133,18 @@ const HubWrapper: React.FC = () => {
                 value={originUsername}
                 onChange={(e) => setOriginUsername(e.target.value)}
             />
+            <input
+                style={{
+                    marginBottom: '10px',
+                    width: '100%',
+                    border: '1px solid #ccc',
+                    borderRadius: '5px',
+                    padding: '5px',
+                }}
+                type="text"
+                value={integrationId}
+                onChange={(e) => setIntegrationId(e.target.value)}
+            />
             <h1>StackOneHub Demo</h1>
             <StackOneHub
                 key={token}
@@ -145,11 +165,37 @@ const HubWrapper: React.FC = () => {
     );
 };
 
+const App: React.FC = () => {
+    const [tab, setTab] = useState<Tab>('default');
+
+    return (
+        <div>
+            <div className="tab-bar">
+                <button
+                    className={`tab-btn${tab === 'default' ? ' active' : ''}`}
+                    onClick={() => setTab('default')}
+                >
+                    Default
+                </button>
+                <button
+                    className={`tab-btn${tab === 'suspense-mre' ? ' active' : ''}`}
+                    onClick={() => setTab('suspense-mre')}
+                >
+                    Suspense MRE
+                </button>
+            </div>
+
+            {tab === 'default' && <HubWrapper />}
+            {tab === 'suspense-mre' && <SuspenseMRE />}
+        </div>
+    );
+};
+
 const rootElement = document.getElementById('root');
 if (rootElement) {
     ReactDOM.createRoot(rootElement).render(
         <React.StrictMode>
-            <HubWrapper />
+            <App />
         </React.StrictMode>,
     );
 }

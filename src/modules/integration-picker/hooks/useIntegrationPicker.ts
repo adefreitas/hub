@@ -44,6 +44,7 @@ interface UseIntegrationPickerProps {
     accountId?: string;
     onSuccess?: (account: { id: string; provider: string }) => void;
     dashboardUrl?: string;
+    debug?: boolean;
 }
 
 export enum EventType {
@@ -58,6 +59,7 @@ export const useIntegrationPicker = ({
     accountId,
     onSuccess,
     dashboardUrl,
+    debug,
 }: UseIntegrationPickerProps) => {
     const [selectedIntegration, setSelectedIntegration] = useState<Integration | null>(null);
     const [formData, setFormData] = useState<Record<string, string>>({});
@@ -693,6 +695,14 @@ export const useIntegrationPicker = ({
             }));
         }
     }, [hasError, connectionState.loading]);
+
+    const prevLoadingRef = useRef(connectionState.loading);
+    useEffect(() => {
+        if (debug && prevLoadingRef.current && !connectionState.loading) {
+            console.trace('[hub] connectionState.loading → false', connectionState);
+        }
+        prevLoadingRef.current = connectionState.loading;
+    }, [debug, connectionState]);
 
     const resetConnectionState = useCallback(() => {
         setConnectionState({ loading: false, success: false });
