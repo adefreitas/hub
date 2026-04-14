@@ -1,7 +1,17 @@
-import { startTransition, Suspense, useCallback, useEffect, useState } from 'react';
-import { fetchQuery, graphql, RelayEnvironmentProvider, useLazyLoadQuery, useMutation, useRelayEnvironment } from 'react-relay';
+import { Suspense, startTransition, useCallback, useEffect, useState } from 'react';
+import {
+    RelayEnvironmentProvider,
+    fetchQuery,
+    graphql,
+    useLazyLoadQuery,
+    useMutation,
+    useRelayEnvironment,
+} from 'react-relay';
 import { StackOneHub } from '../src/StackOneHub';
 import { relayEnvironment } from './RelayEnvironment';
+import type { SuspenseMREConfirmAccountMutation } from './__generated__/SuspenseMREConfirmAccountMutation.graphql';
+import type { SuspenseMRECreateSessionMutation } from './__generated__/SuspenseMRECreateSessionMutation.graphql';
+import type { SuspenseMREProvidersQuery } from './__generated__/SuspenseMREProvidersQuery.graphql';
 
 const PROVIDER_KEY = 'jira';
 
@@ -54,13 +64,19 @@ function SuspenseMREContent() {
 
     console.log(`[SuspenseMRE] render — status=${connectState.status}`);
 
-    const data = useLazyLoadQuery<any>(providersQuery, {}, { fetchPolicy: 'network-only' });
+    const data = useLazyLoadQuery<SuspenseMREProvidersQuery>(
+        providersQuery,
+        {},
+        { fetchPolicy: 'network-only' },
+    );
 
     const providers = data?.viewer?.stackOneProviders ?? [];
     const jiraProvider = providers.find((p: { key: string }) => p.key === PROVIDER_KEY);
 
-    const [commitCreateSession] = useMutation<any>(createSessionMutation);
-    const [commitConfirmAccount] = useMutation<any>(confirmAccountMutation);
+    const [commitCreateSession] =
+        useMutation<SuspenseMRECreateSessionMutation>(createSessionMutation);
+    const [commitConfirmAccount] =
+        useMutation<SuspenseMREConfirmAccountMutation>(confirmAccountMutation);
 
     const handleSuccess = useCallback(
         (account: { id: string; provider: string }) => {
@@ -71,7 +87,7 @@ function SuspenseMREContent() {
                 variables: {
                     input: { stackoneAccountId: account.id, provider: account.provider },
                 },
-                onCompleted: (responseData: any) => {
+                onCompleted: (responseData) => {
                     const { errors } = responseData.confirmStackOneAccount ?? {};
                     if (errors?.length) {
                         setConnectState({
@@ -118,7 +134,7 @@ function SuspenseMREContent() {
                     integrationId: jiraProvider.integrationId ?? undefined,
                 },
             },
-            onCompleted: (responseData: any) => {
+            onCompleted: (responseData) => {
                 const { token, errors } = responseData.createStackOneConnectSession ?? {};
                 if (errors?.length) {
                     setConnectState({
@@ -144,7 +160,7 @@ function SuspenseMREContent() {
     }, [jiraProvider, commitCreateSession]);
 
     // Auto-start on mount — matches client's pattern
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // biome-ignore lint/correctness/useExhaustiveDependencies: intentional empty deps to run once on mount
     useEffect(() => {
         startTransition(() => {
             requestToken();
@@ -198,8 +214,19 @@ function SuspenseMREContent() {
             {connectState.status === 'hub_open' && (
                 <div>
                     <button
-                        onClick={() => setConnectState({ status: 'hub_open', token: 'invalid-token' })}
-                        style={{ marginBottom: 8, padding: '4px 8px', background: '#fdd', border: '1px solid #f99', borderRadius: 4, cursor: 'pointer', fontFamily: 'monospace', fontSize: 12 }}
+                        onClick={() =>
+                            setConnectState({ status: 'hub_open', token: 'invalid-token' })
+                        }
+                        style={{
+                            marginBottom: 8,
+                            padding: '4px 8px',
+                            background: '#fdd',
+                            border: '1px solid #f99',
+                            borderRadius: 4,
+                            cursor: 'pointer',
+                            fontFamily: 'monospace',
+                            fontSize: 12,
+                        }}
                     >
                         simulate token expiry
                     </button>
@@ -239,9 +266,7 @@ export function SuspenseMRE() {
             <BackgroundPoller />
             <Suspense
                 fallback={
-                    <div style={{ padding: 24, fontFamily: 'monospace' }}>
-                        Loading providers...
-                    </div>
+                    <div style={{ padding: 24, fontFamily: 'monospace' }}>Loading providers...</div>
                 }
             >
                 <SuspenseMREContent />

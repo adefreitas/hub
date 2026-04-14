@@ -72,7 +72,7 @@ export const useIntegrationPicker = ({
     const checkStateTimeoutRef = useRef<number | null>(null);
     const oauthChannelRef = useRef<BroadcastChannel | null>(null);
     const storageListenerRef = useRef<((event: StorageEvent) => void) | null>(null);
-    const [connectionState, _setConnectionState] = useState<{
+    const [connectionState, setConnectionState] = useState<{
         loading: boolean;
         success: boolean;
         error?: {
@@ -83,12 +83,6 @@ export const useIntegrationPicker = ({
         loading: false,
         success: false,
     });
-    const setConnectionState: typeof _setConnectionState = (value) => {
-        if (debug) {
-            console.trace('[hub] setConnectionState', typeof value === 'function' ? '(updater)' : value);
-        }
-        _setConnectionState(value);
-    };
     const handleSuccess = useCallback(
         (account: { id: string; provider: string }) => {
             setConnectionState({ loading: false, success: true });
@@ -699,6 +693,14 @@ export const useIntegrationPicker = ({
             }));
         }
     }, [hasError, connectionState.loading]);
+
+    const prevLoadingRef = useRef(connectionState.loading);
+    useEffect(() => {
+        if (debug && prevLoadingRef.current && !connectionState.loading) {
+            console.trace('[hub] connectionState.loading → false', connectionState);
+        }
+        prevLoadingRef.current = connectionState.loading;
+    }, [debug, connectionState]);
 
     const resetConnectionState = useCallback(() => {
         setConnectionState({ loading: false, success: false });

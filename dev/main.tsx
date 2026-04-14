@@ -49,7 +49,8 @@ const HubWrapper: React.FC = () => {
                     origin_owner_name: originOwnerName,
                     origin_username: originUsername,
                     account_id: accountId !== '' && accountId != null ? accountId : undefined,
-                    integration_id: integrationId !== '' && integrationId != null ? integrationId : undefined,
+                    integration_id:
+                        integrationId !== '' && integrationId != null ? integrationId : undefined,
                 },
             });
             if (!response) {
@@ -63,7 +64,7 @@ const HubWrapper: React.FC = () => {
         } finally {
             setLoading(false);
         }
-    }, [accountId, originOwnerId, originOwnerName, originUsername]);
+    }, [accountId, integrationId, originOwnerId, originOwnerName, originUsername]);
 
     useEffect(() => {
         fetchToken();

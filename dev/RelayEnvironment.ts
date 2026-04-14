@@ -4,7 +4,8 @@ import type { FetchFunction } from 'relay-runtime';
 const PROVIDER_KEY = 'jira';
 const PROVIDER_NAME = 'Jira';
 const PROVIDER_VERSION = '1.0.0';
-const PROVIDER_INTEGRATION_ID = import.meta.env.VITE_INTEGRATION_ID ?? 'b6d98311-d01d-4d4a-af1a-8430a8be02e6';
+const PROVIDER_INTEGRATION_ID =
+    import.meta.env.VITE_INTEGRATION_ID ?? 'b6d98311-d01d-4d4a-af1a-8430a8be02e6';
 
 const fetchFn: FetchFunction = async (operation, _variables) => {
     await new Promise((resolve) => setTimeout(resolve, 300));
@@ -15,7 +16,12 @@ const fetchFn: FetchFunction = async (operation, _variables) => {
                 viewer: {
                     __typename: 'Viewer',
                     stackOneProviders: [
-                        { key: PROVIDER_KEY, name: PROVIDER_NAME, version: PROVIDER_VERSION, integrationId: PROVIDER_INTEGRATION_ID },
+                        {
+                            key: PROVIDER_KEY,
+                            name: PROVIDER_NAME,
+                            version: PROVIDER_VERSION,
+                            integrationId: PROVIDER_INTEGRATION_ID,
+                        },
                     ],
                 },
             },

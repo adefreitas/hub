@@ -17,9 +17,7 @@ type Mutation {
     createStackOneConnectSession(
         input: CreateStackOneConnectSessionInput!
     ): CreateStackOneConnectSessionPayload
-    confirmStackOneAccount(
-        input: ConfirmStackOneAccountInput!
-    ): ConfirmStackOneAccountPayload
+    confirmStackOneAccount(input: ConfirmStackOneAccountInput!): ConfirmStackOneAccountPayload
 }
 
 input CreateStackOneConnectSessionInput {

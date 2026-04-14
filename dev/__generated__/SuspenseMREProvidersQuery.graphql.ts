@@ -11,107 +11,106 @@
 import { ConcreteRequest } from 'relay-runtime';
 export type SuspenseMREProvidersQuery$variables = Record<PropertyKey, never>;
 export type SuspenseMREProvidersQuery$data = {
-  readonly viewer: {
-    readonly stackOneProviders: ReadonlyArray<{
-      readonly integrationId: string | null | undefined;
-      readonly key: string;
-      readonly name: string;
-      readonly version: string | null | undefined;
-    }>;
-  };
+    readonly viewer: {
+        readonly stackOneProviders: ReadonlyArray<{
+            readonly integrationId: string | null | undefined;
+            readonly key: string;
+            readonly name: string;
+            readonly version: string | null | undefined;
+        }>;
+    };
 };
 export type SuspenseMREProvidersQuery = {
-  response: SuspenseMREProvidersQuery$data;
-  variables: SuspenseMREProvidersQuery$variables;
+    response: SuspenseMREProvidersQuery$data;
+    variables: SuspenseMREProvidersQuery$variables;
 };
 
-const node: ConcreteRequest = (function(){
-var v0 = {
-  "alias": null,
-  "args": null,
-  "concreteType": "Viewer",
-  "kind": "LinkedField",
-  "name": "viewer",
-  "plural": false,
-  "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "concreteType": "StackOneProvider",
-      "kind": "LinkedField",
-      "name": "stackOneProviders",
-      "plural": true,
-      "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "key",
-          "storageKey": null
+const node: ConcreteRequest = (function () {
+    var v0 = {
+        alias: null,
+        args: null,
+        concreteType: 'Viewer',
+        kind: 'LinkedField',
+        name: 'viewer',
+        plural: false,
+        selections: [
+            {
+                alias: null,
+                args: null,
+                concreteType: 'StackOneProvider',
+                kind: 'LinkedField',
+                name: 'stackOneProviders',
+                plural: true,
+                selections: [
+                    {
+                        alias: null,
+                        args: null,
+                        kind: 'ScalarField',
+                        name: 'key',
+                        storageKey: null,
+                    },
+                    {
+                        alias: null,
+                        args: null,
+                        kind: 'ScalarField',
+                        name: 'name',
+                        storageKey: null,
+                    },
+                    {
+                        alias: null,
+                        args: null,
+                        kind: 'ScalarField',
+                        name: 'version',
+                        storageKey: null,
+                    },
+                    {
+                        alias: null,
+                        args: null,
+                        kind: 'ScalarField',
+                        name: 'integrationId',
+                        storageKey: null,
+                    },
+                ],
+                storageKey: null,
+            },
+        ],
+        storageKey: null,
+    };
+    return {
+        fragment: {
+            argumentDefinitions: [],
+            kind: 'Fragment',
+            metadata: null,
+            name: 'SuspenseMREProvidersQuery',
+            selections: [
+                {
+                    kind: 'RequiredField',
+                    field: v0 /*: any*/,
+                    action: 'THROW',
+                },
+            ],
+            type: 'Query',
+            abstractKey: null,
         },
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "name",
-          "storageKey": null
+        kind: 'Request',
+        operation: {
+            argumentDefinitions: [],
+            kind: 'Operation',
+            name: 'SuspenseMREProvidersQuery',
+            selections: [v0 /*: any*/],
         },
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "version",
-          "storageKey": null
+        params: {
+            cacheID: '4c3a800c7dce93fb7a779bf3e6041bb4',
+            id: null,
+            metadata: {},
+            name: 'SuspenseMREProvidersQuery',
+            operationKind: 'query',
+            text: 'query SuspenseMREProvidersQuery {\n  viewer {\n    stackOneProviders {\n      key\n      name\n      version\n      integrationId\n    }\n  }\n}\n',
         },
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "integrationId",
-          "storageKey": null
-        }
-      ],
-      "storageKey": null
-    }
-  ],
-  "storageKey": null
-};
-return {
-  "fragment": {
-    "argumentDefinitions": [],
-    "kind": "Fragment",
-    "metadata": null,
-    "name": "SuspenseMREProvidersQuery",
-    "selections": [
-      {
-        "kind": "RequiredField",
-        "field": (v0/*: any*/),
-        "action": "THROW"
-      }
-    ],
-    "type": "Query",
-    "abstractKey": null
-  },
-  "kind": "Request",
-  "operation": {
-    "argumentDefinitions": [],
-    "kind": "Operation",
-    "name": "SuspenseMREProvidersQuery",
-    "selections": [
-      (v0/*: any*/)
-    ]
-  },
-  "params": {
-    "cacheID": "4c3a800c7dce93fb7a779bf3e6041bb4",
-    "id": null,
-    "metadata": {},
-    "name": "SuspenseMREProvidersQuery",
-    "operationKind": "query",
-    "text": "query SuspenseMREProvidersQuery {\n  viewer {\n    stackOneProviders {\n      key\n      name\n      version\n      integrationId\n    }\n  }\n}\n"
-  }
-};
+    };
 })();
 
-(node as any).hash = "59225c61b603440f197fbf0576b4eb3a";
+// biome-ignore lint/suspicious/noExplicitAny: relay-compiler generated
+(node as any).hash = '59225c61b603440f197fbf0576b4eb3a';
 
 export default node;
