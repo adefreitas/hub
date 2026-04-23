@@ -15,6 +15,8 @@ const HubWrapper: React.FC = () => {
     const [token, setToken] = useState<string>();
     const apiUrl = import.meta.env.VITE_API_URL ?? 'https://api.stackone.com';
     const appUrl = import.meta.env.VITE_APP_URL ?? 'https://app.stackone.com';
+    const isCorsProtected = !apiUrl.includes('localhost');
+    const [manualToken, setManualToken] = useState<string>('');
     const [theme, setTheme] = useState<'light' | 'dark'>('light');
     const [accountId, setAccountId] = useState<string>();
     const [integrationId, setIntegrationId] =
@@ -68,8 +70,9 @@ const HubWrapper: React.FC = () => {
     }, [accountId, integrationId, originOwnerId, originOwnerName, originUsername]);
 
     useEffect(() => {
+        if (isCorsProtected) return;
         fetchToken();
-    }, [fetchToken]);
+    }, [fetchToken, isCorsProtected]);
 
     return (
         <div className={`hub-container ${theme}`}>
@@ -77,8 +80,36 @@ const HubWrapper: React.FC = () => {
             {error && <p>Error loading token: {error}</p>}
             {token && <p className="token-display">Token: {token}</p>}
             <p>Current mode: {mode || 'No mode selected'}</p>
+            {isCorsProtected && (
+                <>
+                    <p>
+                        Paste a connect session token (the /connect_sessions endpoint is
+                        CORS-protected on dev and production so it cannot be automatically created
+                        by this frontend only demo app).
+                    </p>
+                    <input
+                        style={{
+                            marginBottom: '10px',
+                            width: '100%',
+                            border: '1px solid #ccc',
+                            borderRadius: '5px',
+                            padding: '5px',
+                        }}
+                        type="text"
+                        placeholder="Connect session token"
+                        value={manualToken}
+                        onChange={(e) => setManualToken(e.target.value)}
+                    />
+                </>
+            )}
             <div className="button-row">
-                <button onClick={fetchToken}>Get new token</button>
+                {isCorsProtected ? (
+                    <button onClick={() => setToken(manualToken)} disabled={!manualToken}>
+                        Use token
+                    </button>
+                ) : (
+                    <button onClick={fetchToken}>Get new token</button>
+                )}
                 <button onClick={() => setMode('integration-picker')}>
                     Set Integration Picker mode
                 </button>
