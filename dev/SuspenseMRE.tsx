@@ -61,6 +61,10 @@ type ConnectState =
 
 function SuspenseMREContent() {
     const [connectState, setConnectState] = useState<ConnectState>({ status: 'idle' });
+    const [manualToken, setManualToken] = useState<string>('');
+    const apiUrl = import.meta.env.VITE_API_URL ?? 'https://api.stackone.com';
+    const appUrl = import.meta.env.VITE_APP_URL ?? 'https://app.stackone.com';
+    const isCorsProtected = !apiUrl.includes('localhost');
 
     console.log(`[SuspenseMRE] render — status=${connectState.status}`);
 
@@ -162,13 +166,11 @@ function SuspenseMREContent() {
     // Auto-start on mount — matches client's pattern
     // biome-ignore lint/correctness/useExhaustiveDependencies: intentional empty deps to run once on mount
     useEffect(() => {
+        if (isCorsProtected) return;
         startTransition(() => {
             requestToken();
         });
     }, []);
-
-    const apiUrl = import.meta.env.VITE_API_URL ?? 'https://api.stackone.com';
-    const appUrl = import.meta.env.VITE_APP_URL ?? 'https://app.stackone.com';
 
     return (
         <div style={{ padding: 24, fontFamily: 'monospace', maxWidth: 800 }}>
@@ -194,6 +196,38 @@ function SuspenseMREContent() {
                     </div>
                 )}
             </div>
+
+            {isCorsProtected && connectState.status === 'idle' && (
+                <div style={{ marginBottom: 16 }}>
+                    <div style={{ fontSize: 12, color: '#666', marginBottom: 8 }}>
+                        Paste a connect session token (the /connect_sessions endpoint is
+                        CORS-protected on dev and production so it cannot be automatically created
+                        by this frontend only demo app).
+                    </div>
+                    <input
+                        type="text"
+                        placeholder="Connect session token"
+                        value={manualToken}
+                        onChange={(e) => setManualToken(e.target.value)}
+                        style={{
+                            width: '100%',
+                            padding: '6px 8px',
+                            marginBottom: 8,
+                            border: '1px solid #ccc',
+                            borderRadius: 4,
+                            fontFamily: 'monospace',
+                        }}
+                    />
+                    <button
+                        onClick={() =>
+                            setConnectState({ status: 'hub_open', token: manualToken })
+                        }
+                        disabled={!manualToken}
+                    >
+                        Use token
+                    </button>
+                </div>
+            )}
 
             {(connectState.status === 'creating_session' ||
                 connectState.status === 'confirming_account') && (
