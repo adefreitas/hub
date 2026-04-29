@@ -1,3 +1,4 @@
+import { StackOneHub } from '@stackone/hub';
 import { Suspense, startTransition, useCallback, useEffect, useState } from 'react';
 import {
     RelayEnvironmentProvider,
@@ -7,7 +8,6 @@ import {
     useMutation,
     useRelayEnvironment,
 } from 'react-relay';
-import { StackOneHub } from '../src/StackOneHub';
 import { relayEnvironment } from './RelayEnvironment';
 import type { SuspenseMREConfirmAccountMutation } from './__generated__/SuspenseMREConfirmAccountMutation.graphql';
 import type { SuspenseMRECreateSessionMutation } from './__generated__/SuspenseMRECreateSessionMutation.graphql';
