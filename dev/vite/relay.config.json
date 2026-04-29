@@ -1,6 +1,6 @@
 {
-    "src": "./dev",
-    "schema": "./dev/schema.graphql",
+    "src": ".",
+    "schema": "./schema.graphql",
     "language": "typescript",
     "eagerEsModules": true,
     "excludes": ["**/__generated__/**", "**/node_modules/**"]

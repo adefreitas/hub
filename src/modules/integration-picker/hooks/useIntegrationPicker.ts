@@ -107,7 +107,10 @@ export const useIntegrationPicker = ({
     );
 
     const allowedOrigins = useMemo(() => {
-        const origins = new Set([window.location.origin]);
+        const origins = new Set<string>();
+        if (typeof window !== 'undefined') {
+            origins.add(window.location.origin);
+        }
         if (dashboardUrl) {
             try {
                 origins.add(new URL(dashboardUrl).origin);

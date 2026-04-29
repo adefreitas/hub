@@ -1,10 +1,28 @@
 import './main.css';
+import { StackOneHub } from '@stackone/hub';
 import React, { useCallback, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom/client';
-import { StackOneHub } from '../src/StackOneHub';
-import { request } from '../src/shared/httpClient';
-import { HubModes } from '../src/types/types';
 import { SuspenseMRE } from './SuspenseMRE';
+
+type HubModes = 'integration-picker';
+
+async function request<T>(params: {
+    url: string;
+    method: 'GET' | 'POST' | 'PATCH' | 'DELETE';
+    headers?: Record<string, string>;
+    body?: Record<string, unknown>;
+}): Promise<T | null> {
+    const response = await fetch(params.url, {
+        method: params.method,
+        headers: params.headers,
+        body: params.body ? JSON.stringify(params.body) : undefined,
+    });
+    if (!response.ok) {
+        throw new Error(`Request failed: ${response.status}`);
+    }
+    const text = await response.text();
+    return text ? (JSON.parse(text) as T) : null;
+}
 
 type Tab = 'default' | 'suspense-mre';
 
